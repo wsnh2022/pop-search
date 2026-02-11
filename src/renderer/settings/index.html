@@ -297,6 +297,15 @@
       border: 1px solid var(--border-color);
       overflow: hidden;
       transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+      /* Normal state */
+    }
+
+    .add-section.expanded {
+      z-index: 50;
+      /* Bring to front when editing */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     .add-section-header {
@@ -552,6 +561,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      pointer-events: none;
+      /* Let clicks pass through to inputs below */
     }
 
     #toast.visible {

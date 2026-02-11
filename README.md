@@ -6,19 +6,25 @@
 
 ## 📺 Visual Showcase
 
-### 🚀 Search in Action
+### ⚡ 1. The Instant Search Interface
+**Master the Trigger:** Hold **`CapsLock`** + press **`S`**  or  **Long-Press `Right Mouse Button`**.
+
 ![Search UI](assets/screenshots/main_popup.png)
 
-<video src="https://github.com/user-attachments/assets/317ba541-bc16-42d7-aaec-0d2484a0c762" controls="controls" style="max-width: 100%;"></video>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/317ba541-bc16-42d7-aaec-0d2484a0c762" controls="controls" style="max-width: 100%; border-radius: 10px;"></video>
+</div>
 
-> **⌨️ Keyboard:** Hold `CapsLock` + press `S`  
-> **🖱️ Mouse:** Hold `Right-Click` (200ms)
+---
 
-### ⚙️ Professional Settings
+### 🎨 2. The Aura Control Center (Settings)
+**Personalize:** Change accent colors, glow intensity, and manage your search providers in real-time.
+
 ![Settings UI](assets/screenshots/settings.png)
 
-> **⚡ Setup:** Customize your providers, accent colors, and glow intensity in real-time.
-
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/aafbf0a8-9f01-4919-9573-3f5073664690" controls="controls" style="max-width: 100%; border-radius: 10px;"></video>
+</div>
 ---
 
 ## 🎨 Why PopSearch 1.0 Beta? (The Professional Edge)

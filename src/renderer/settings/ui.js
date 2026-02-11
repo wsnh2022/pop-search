@@ -16,7 +16,7 @@ export function initUI() {
             categories['Unsorted'] = categories['General'] === '🔍' ? '🔴' : categories['General'];
             delete categories['General'];
             providers.forEach(p => {
-                if (p.category === 'General' || !p.category) p.category = 'Unsorted';
+                if (p.category === 'General' || !p.category) p.category = '';
             });
             Store.saveCategories(categories);
             Store.saveProviders(providers);
@@ -139,14 +139,19 @@ function updateCategorySelects() {
     const currentVal = select.value;
     select.innerHTML = '<option value="">Default (Unsorted)</option>';
     Object.keys(categories).forEach(cat => {
-        if (cat === 'Unsorted') return; // Handled by default option
+        if (cat === 'Unsorted') return;
         const opt = document.createElement('option');
         opt.value = cat;
         opt.textContent = cat;
         select.appendChild(opt);
     });
-    if (categories[currentVal]) select.value = currentVal;
-    else if (!currentVal) select.value = '';
+
+    // Safety check: if current value no longer exists, default to ""
+    if (categories[currentVal] || currentVal === "") {
+        select.value = currentVal;
+    } else {
+        select.value = "";
+    }
 }
 
 export function renderCategories() {
@@ -237,15 +242,26 @@ export function cancelCatEdit() {
 export function removeCategory(name) {
     if (Object.keys(categories).length <= 1) return alert('Must have at least one category.');
     if (confirm(`Remove category "${name}"? Providers in this category will move to "Unsorted".`)) {
+        // State cleanup: If we are currently editing this category, cancel the edit first
+        if (editingCatName === name) {
+            cancelCatEdit();
+        }
+
         delete categories[name];
         // Relink providers
-        const fallback = Object.keys(categories)[0] || 'Unsorted';
-        providers.forEach(p => { if (p.category === name) p.category = fallback; });
+        providers.forEach(p => {
+            if (p.category === name || !p.category || p.category === "General") {
+                p.category = "";
+            }
+        });
+
         Store.saveCategories(categories);
         Store.saveProviders(providers);
+
         renderCategories();
         renderProviders();
         updateCategorySelects();
+        showToast(`Category "${name}" removed.`, 'info');
     }
 }
 
@@ -312,7 +328,9 @@ export function renderProviders() {
         div.dataset.index = originalIndex;
 
         const favicon = provider.icon || getFaviconUrl(provider.url);
-        const iconValue = categories[provider.category] || (provider.category === 'Unsorted' ? '🔴' : '🔍');
+        const catName = provider.category || 'Unsorted';
+        const iconValue = categories[catName] || (catName === 'Unsorted' ? '🔴' : '🔍');
+
         let catIconHtml = '';
         if (isImageSource(iconValue)) {
             catIconHtml = `<img src="${iconValue}" style="width: 12px; height: 12px; object-fit: contain; vertical-align: middle;">`;
@@ -335,7 +353,7 @@ export function renderProviders() {
 
         div.innerHTML = `
       <div class="provider-info" style="flex-grow: 1; cursor: pointer;" onclick="window.ui.editProvider(${originalIndex})" title="Click to Edit">
-        <div style="font-weight: bold;">${provider.name} <span style="font-size: 10px; font-weight: normal; color: var(--subtitle-color);">(${catIconHtml} ${provider.category || 'General'})</span></div>
+        <div style="font-weight: bold;">${provider.name} <span style="font-size: 10px; font-weight: normal; color: var(--subtitle-color);">(${catIconHtml} ${catName})</span></div>
         <div style="font-size: 12px; color: var(--url-color);">${provider.url}</div>
       </div>
       <div class="toggle ${provider.enabled ? 'active' : ''}" onclick="window.ui.toggleProvider(${originalIndex})"></div>
@@ -471,7 +489,10 @@ export function editProvider(index) {
     document.getElementById('providerName').value = p.name;
     document.getElementById('providerUrl').value = p.url;
     document.getElementById('providerIcon').value = p.icon || '';
-    document.getElementById('providerCategory').value = p.category || 'Unsorted';
+
+    // Normalize category value for select (data uses "" or "Unsorted" occasionally, UI wants "")
+    document.getElementById('providerCategory').value = (p.category === 'Unsorted' || !p.category) ? "" : p.category;
+
     updateIconPreview('providerIcon', 'providerIconPreview');
     updateGetIconLink('provider');
     document.getElementById('formTitle').textContent = 'Edit Search Provider';
@@ -489,17 +510,26 @@ export function editProvider(index) {
 }
 
 export function addProvider() {
-    const name = document.getElementById('providerName').value.trim();
-    const url = document.getElementById('providerUrl').value.trim();
-    const category = document.getElementById('providerCategory').value || 'Unsorted';
+    const nameInput = document.getElementById('providerName');
+    const urlInput = document.getElementById('providerUrl');
+    const name = nameInput.value.trim();
+    const url = urlInput.value.trim();
+    const category = document.getElementById('providerCategory').value || ""; // Ensure empty string for Unsorted
     let icon = document.getElementById('providerIcon').value.trim();
 
-    if (!name || !url) return alert('Please fill in both Name and URL');
+    if (!name || !url) {
+        showToast('Please fill in Name and URL', 'error');
+        if (!name) nameInput.focus();
+        else urlInput.focus();
+        return;
+    }
 
     if (editingIndex >= 0) {
         providers[editingIndex] = { ...providers[editingIndex], name, url, icon, category };
+        showToast('Provider updated!', 'success');
     } else {
         providers.push({ name, url, icon, enabled: true, category });
+        showToast('Provider added!', 'success');
     }
 
     Store.saveProviders(providers);
@@ -524,9 +554,19 @@ export function cancelEdit() {
 
 export function removeProvider(index) {
     if (confirm(`Remove ${providers[index].name}?`)) {
+        // State cleanup: If we are currently editing THIS provider, cancel the edit
+        if (editingIndex === index) {
+            cancelEdit();
+        } else if (editingIndex > index) {
+            // Fix index shifting: if we delete an item BEFORE the one being edited,
+            // we must decrement the editingIndex to match its new position.
+            editingIndex--;
+        }
+
         providers.splice(index, 1);
         Store.saveProviders(providers);
         renderProviders();
+        showToast('Provider removed.', 'info');
     }
 }
 
@@ -577,6 +617,14 @@ export function showSection(sectionId, element) {
     element.classList.add('active');
     document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
     document.getElementById(sectionId).classList.add('active');
+
+    // Safety: Refresh the UI for that section
+    if (sectionId === 'providers-list') {
+        updateCategorySelects();
+        renderProviders();
+    } else if (sectionId === 'categories-list') {
+        renderCategories();
+    }
 }
 
 export function getProviders() { return providers; }
