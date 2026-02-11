@@ -37,10 +37,6 @@ export function createMainWindow() {
     mainWindow.setAlwaysOnTop(true, 'screen-saver');
     mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
-    // Debugging focus loss
-    mainWindow.on('blur', () => {
-        console.log('[Main] Settings window lost focus');
-    });
 
     if (process.env.ELECTRON_RENDERER_URL) {
         mainWindow.loadURL(`${process.env.ELECTRON_RENDERER_URL}/settings/index.html`);

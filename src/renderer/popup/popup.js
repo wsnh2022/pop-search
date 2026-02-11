@@ -50,62 +50,58 @@ function getFilteredData() {
         return showUnsorted || cat !== 'Unsorted';
     });
 
-    const activeCategories = [...new Set(filteredProviders.map(p => p.category || 'Unsorted'))];
+    // Get Master Categories from settings to preserve order
+    const masterCats = Object.keys(getCategories());
+    const usedCats = new Set(filteredProviders.map(p => p.category || 'Unsorted'));
+
+    // Filter master list to only used ones, then add Unsorted if it exists but wasn't in master
+    const activeCategories = masterCats.filter(cat => usedCats.has(cat));
+    if (usedCats.has('Unsorted') && !activeCategories.includes('Unsorted')) {
+        activeCategories.push('Unsorted');
+    }
 
     return { filteredProviders, activeCategories };
 }
 
 function applyTheme() {
-    const fontWeight = localStorage.getItem('fontWeight') || '500';
-    const fontColor = localStorage.getItem('fontColor');
-    const bgColor = localStorage.getItem('bgColor');
-    const accentColor = localStorage.getItem('accentColor');
-    const tabActiveBg = localStorage.getItem('tabActiveBg');
+    const s = {
+        fontWeight: localStorage.getItem('fontWeight') || '500',
+        fontColor: localStorage.getItem('fontColor'),
+        bgColor: localStorage.getItem('bgColor'),
+        accentColor: localStorage.getItem('accentColor'),
+        tabActiveBg: localStorage.getItem('tabActiveBg'),
+        iconSize: parseInt(localStorage.getItem('iconSize') || DEFAULT_APPEARANCE.iconSize),
+        iconsPerRow: parseInt(localStorage.getItem('iconsPerRow') || DEFAULT_APPEARANCE.iconsPerRow),
+        gridGapX: parseInt(localStorage.getItem('gridGapX') || DEFAULT_APPEARANCE.gridGapX),
+        gridGapY: parseInt(localStorage.getItem('gridGapY') || DEFAULT_APPEARANCE.gridGapY)
+    };
 
-    // Always signal dark theme to main process if needed
-    if (window.electronAPI) window.electronAPI.setTheme('dark');
-
-    // Inject custom styles as CSS variables
     const root = document.documentElement;
-    root.style.setProperty('--popup-font-weight', fontWeight);
+    root.style.setProperty('--popup-font-weight', s.fontWeight);
 
-    if (fontColor) {
-        root.style.setProperty('--label-color', fontColor);
-        root.style.setProperty('--popup-text', fontColor);
+    if (s.fontColor) {
+        root.style.setProperty('--label-color', s.fontColor);
+        root.style.setProperty('--popup-text', s.fontColor);
     }
-    if (bgColor) {
-        root.style.setProperty('--popup-bg', bgColor);
-    }
-    if (accentColor) {
-        root.style.setProperty('--tab-indicator', accentColor);
-        root.style.setProperty('--accent-color', accentColor);
+    if (s.bgColor) root.style.setProperty('--popup-bg', s.bgColor);
 
-        // Dynamic glow shadow using accent color
-        // If it's a hex, we add transparency. If not, we fallback to a standard glow.
-        const glowColor = accentColor.startsWith('#') ? `${accentColor}33` : 'rgba(255, 255, 255, 0.1)';
+    if (s.accentColor) {
+        root.style.setProperty('--tab-indicator', s.accentColor);
+        root.style.setProperty('--accent-color', s.accentColor);
+        const glowColor = s.accentColor.startsWith('#') ? `${s.accentColor}33` : 'rgba(255, 255, 255, 0.1)';
         root.style.setProperty('--shadow', `0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px ${glowColor}`);
     }
-    if (tabActiveBg) {
-        root.style.setProperty('--tab-active-bg', tabActiveBg);
-    }
 
-    // Grid spacing and width logic
-    const iconSize = parseInt(localStorage.getItem('iconSize') || DEFAULT_APPEARANCE.iconSize);
-    const iconsPerRow = parseInt(localStorage.getItem('iconsPerRow') || DEFAULT_APPEARANCE.iconsPerRow);
-    const gridGapX = parseInt(localStorage.getItem('gridGapX') || DEFAULT_APPEARANCE.gridGapX);
-    const gridGapY = parseInt(localStorage.getItem('gridGapY') || DEFAULT_APPEARANCE.gridGapY);
+    if (s.tabActiveBg) root.style.setProperty('--tab-active-bg', s.tabActiveBg);
 
-    const wrapperPadding = 12; // 6px padding on each side
-    const wrapperSize = iconSize + wrapperPadding;
+    const wrapperPadding = 12;
+    const wrapperSize = s.iconSize + wrapperPadding;
 
-    root.style.setProperty('--grid-gap-x', `${gridGapX}px`);
-    root.style.setProperty('--grid-gap-y', `${gridGapY}px`);
+    root.style.setProperty('--grid-gap-x', `${s.gridGapX}px`);
+    root.style.setProperty('--grid-gap-y', `${s.gridGapY}px`);
     root.style.setProperty('--wrapper-size', `${wrapperSize}px`);
 
-    // Width = (num_icons * wrapper_size) + ((num_icons - 1) * gap) + padding_left + padding_right
-    // Total horizontal padding in the grid container is 32px (16px on each side)
-    let maxWidth = (wrapperSize * iconsPerRow) + (gridGapX * (iconsPerRow - 1)) + 32;
-
+    let maxWidth = (wrapperSize * s.iconsPerRow) + (s.gridGapX * (s.iconsPerRow - 1)) + 32;
     root.style.setProperty('--popup-max-width', `${maxWidth}px`);
 }
 

@@ -9,23 +9,9 @@ let searchQuery = '';
 
 export function initUI() {
     try {
-        console.log('Initializing Settings UI...');
-
-        // Data Migration: General -> Unsorted
-        if (categories['General']) {
-            categories['Unsorted'] = categories['General'] === '🔍' ? '🔴' : categories['General'];
-            delete categories['General'];
-            providers.forEach(p => {
-                if (p.category === 'General' || !p.category) p.category = '';
-            });
-            Store.saveCategories(categories);
-            Store.saveProviders(providers);
-            console.log('Migrated data from General to Unsorted');
-        }
-
         const settings = Store.getAppearance();
 
-        const elements = ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontColor', 'bgColor', 'toggleDummyBtn', 'importDummyBtn', 'providerCategory', 'providers', 'categories'];
+        const elements = ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontColor', 'bgColor', 'providerCategory', 'providers', 'categories'];
         elements.forEach(id => {
             if (!document.getElementById(id)) console.warn(`Missing DOM element: ${id}`);
         });
@@ -48,23 +34,24 @@ export function initUI() {
         updateColorPreview('tabActiveBg', 'tabActiveBgPreview');
 
         // Add color input listeners
-        document.getElementById('fontColor').addEventListener('input', (e) => {
-            updateColorPreview('fontColor', 'fontColorPreview');
+        const saveSilently = () => saveAppearance(true);
+
+        ['fontColor', 'bgColor', 'accentColor', 'tabActiveBg'].forEach(id => {
+            const el = document.getElementById(id);
+            el.addEventListener('input', (e) => {
+                updateColorPreview(id, id + 'Preview');
+                saveSilently();
+            });
         });
-        document.getElementById('bgColor').addEventListener('input', (e) => {
-            updateColorPreview('bgColor', 'bgColorPreview');
-        });
-        document.getElementById('accentColor').addEventListener('input', (e) => {
-            updateColorPreview('accentColor', 'accentColorPreview');
-        });
-        document.getElementById('tabActiveBg').addEventListener('input', (e) => {
-            updateColorPreview('tabActiveBg', 'tabActiveBgPreview');
+
+        // Add numerical/select listeners
+        ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontWeight'].forEach(id => {
+            document.getElementById(id).addEventListener('change', saveSilently);
         });
 
 
         // Apply dark theme immediately
         applyTheme('dark');
-        if (window.electronAPI) window.electronAPI.setTheme('dark');
 
         updateCategorySelects();
         renderProviders();
@@ -78,14 +65,10 @@ export function initUI() {
             el.onclick = () => {
                 const isActive = el.classList.toggle('active');
                 if (callback) callback(isActive);
+                saveAppearance(true);
             };
         };
 
-        // Dummy Button Toggle Logic
-        setupToggle('toggleDummyBtn', settings.showDummyBtn, (isActive) => {
-            const dummyBtn = document.getElementById('importDummyBtn');
-            if (dummyBtn) dummyBtn.style.display = isActive ? 'block' : 'none';
-        });
 
         // Unsorted Toggling Logic
         setupToggle('toggleUnsortedBtn', settings.showUnsorted !== false, (isActive) => {
@@ -351,9 +334,28 @@ export function renderProviders() {
             img.src = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2218%22 font-size=%2218%22>${provider.name[0]}</text></svg>`;
         };
 
+        const currentCatIcon = categories[catName] || (catName === 'Unsorted' ? '🔴' : '🔍');
+        const dropdownHtml = Object.keys(categories).map(cat => {
+            const icon = categories[cat] || (cat === 'Unsorted' ? '🔴' : '🔍');
+            let iconHtml = isImageSource(icon) ? `<img src="${icon}" style="width: 12px; height: 12px; object-fit: contain;">` : icon;
+            return `<div class="category-item ${cat === catName ? 'current' : ''}" onclick="window.ui.changeProviderCategory(${originalIndex}, '${cat}', event)">
+                ${iconHtml} ${cat}
+            </div>`;
+        }).join('');
+
         div.innerHTML = `
       <div class="provider-info" style="flex-grow: 1; cursor: pointer;" onclick="window.ui.editProvider(${originalIndex})" title="Click to Edit">
-        <div style="font-weight: bold;">${provider.name} <span style="font-size: 10px; font-weight: normal; color: var(--subtitle-color);">(${catIconHtml} ${catName})</span></div>
+        <div style="font-weight: bold; display: flex; align-items: center;">
+            ${provider.name} 
+            <div class="quick-select-container" onclick="event.stopPropagation()">
+                <div class="quick-select-pill" onclick="window.ui.toggleQuickSelect(${originalIndex}, event)" title="Change Category">
+                    ${catIconHtml} ${catName}
+                </div>
+                <div id="qs-dropdown-${originalIndex}" class="category-dropdown no-drag">
+                    ${dropdownHtml}
+                </div>
+            </div>
+        </div>
         <div style="font-size: 12px; color: var(--url-color);">${provider.url}</div>
       </div>
       <div class="toggle ${provider.enabled ? 'active' : ''}" onclick="window.ui.toggleProvider(${originalIndex})"></div>
@@ -570,7 +572,7 @@ export function removeProvider(index) {
     }
 }
 
-export function saveAppearance() {
+export function saveAppearance(silent = false) {
     const iconSize = document.getElementById('iconSize')?.value || DEFAULT_APPEARANCE.iconSize;
     const iconsPerRow = document.getElementById('iconsPerRow')?.value || DEFAULT_APPEARANCE.iconsPerRow;
     const popupMaxWidth = '0';
@@ -582,7 +584,6 @@ export function saveAppearance() {
     const tabActiveBg = document.getElementById('tabActiveBg')?.value || DEFAULT_APPEARANCE.tabActiveBg;
     const gridGapX = document.getElementById('gridGapX')?.value || DEFAULT_APPEARANCE.gridGapX;
     const gridGapY = document.getElementById('gridGapY')?.value || DEFAULT_APPEARANCE.gridGapY;
-    const showDummyBtn = document.getElementById('toggleDummyBtn')?.classList.contains('active') || false;
     const showUnsorted = document.getElementById('toggleUnsortedBtn')?.classList.contains('active') || false;
 
     Store.saveAppearance({
@@ -596,12 +597,11 @@ export function saveAppearance() {
         bgColor,
         accentColor,
         tabActiveBg,
-        showDummyBtn,
         showUnsorted,
         customCSS: ''
     });
     applyTheme();
-    showToast('Settings saved!', 'success');
+    if (!silent) showToast('Settings saved!', 'success');
 }
 
 
@@ -632,40 +632,7 @@ export function setProviders(p) { providers = p; renderProviders(); }
 export function getCategories() { return categories; }
 export function setCategories(c) { categories = c; renderCategories(); updateCategorySelects(); }
 
-export async function loadDummyData() {
-    try {
-        // Try multiple paths to find dummy.json depending on dev/prod environment
-        const paths = ['../../../dummy.json', '../../dummy.json', './dummy.json', '/dummy.json'];
-        let imported = null;
 
-        for (const path of paths) {
-            try {
-                const response = await fetch(path);
-                if (response.ok) {
-                    imported = await response.json();
-                    break;
-                }
-            } catch (e) { /* continue */ }
-        }
-
-        if (!imported) {
-            // If fetch fails (common in Electron with file://), try bridge-based approach or fallback
-            showToast('Searching for dummy.json...', 'info');
-            // Fallback: we know the structure, let's just use it if fetch fails
-            throw new Error('Could not find dummy.json in root. Please ensure it exists in the project root.');
-        }
-
-        if (imported.providers && imported.categories) {
-            setProviders(imported.providers);
-            Store.saveProviders(imported.providers);
-            setCategories(imported.categories);
-            Store.saveCategories(imported.categories);
-            showToast('Dummy data loaded successfully!', 'success');
-        }
-    } catch (err) {
-        showToast('Error: ' + err.message, 'error');
-    }
-}
 
 function updateColorPreview(inputId, previewId) {
     const input = document.getElementById(inputId);
@@ -820,3 +787,33 @@ export async function executeBulkImport() {
         showSection('providers-list', document.getElementById('nav-providers'));
     }, 1000);
 }
+export function toggleQuickSelect(index, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    const dropdown = document.getElementById(`qs-dropdown-${index}`);
+    const wasActive = dropdown.classList.contains('active');
+
+    // Close all other dropdowns
+    document.querySelectorAll('.category-dropdown').forEach(d => d.classList.remove('active'));
+
+    if (!wasActive) {
+        dropdown.classList.add('active');
+    }
+}
+
+export function changeProviderCategory(index, newCat, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    providers[index].category = newCat === 'Unsorted' ? "" : newCat;
+    Store.saveProviders(providers);
+    renderProviders();
+    showToast(`Moved to ${newCat}`, 'success');
+}
+
+// Global click listener to close dropdowns
+document.addEventListener('click', () => {
+    document.querySelectorAll('.category-dropdown').forEach(d => d.classList.remove('active'));
+});

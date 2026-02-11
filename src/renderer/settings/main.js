@@ -15,12 +15,13 @@ import {
     searchProviderIcons8,
     updateGetIconLink,
     resetConfig,
-    loadDummyData,
     parseBulkImport,
     renderBulkPreview,
     executeBulkImport,
     updateIconPreview,
-    toggleAddSection
+    toggleAddSection,
+    toggleQuickSelect,
+    changeProviderCategory
 } from './ui';
 import { Bridge } from './bridge';
 
@@ -43,12 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
         searchProviderIcons8,
         updateGetIconLink,
         resetConfig,
-        loadDummyData,
         parseBulkImport,
         renderBulkPreview,
         executeBulkImport,
         updateIconPreview,
-        toggleAddSection
+        toggleAddSection,
+        toggleQuickSelect,
+        changeProviderCategory
     };
     window.bridge = Bridge;
 

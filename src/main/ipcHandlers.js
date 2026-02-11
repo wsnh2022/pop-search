@@ -67,11 +67,6 @@ export function registerIpcHandlers() {
         if (mainWindow && !mainWindow.isDestroyed()) mainWindow.hide();
     });
 
-    ipcMain.on(IPC_CHANNELS.SET_THEME, () => {
-        console.log(`[Main Theme] Forcing theme to dark`);
-        nativeTheme.themeSource = 'dark';
-        updateTrayMenu(); // Rebuild tray menu with dark theme
-    });
 
     ipcMain.on(IPC_CHANNELS.CONTEXT_MENU, (event) => {
         console.log(`[Main Menu] Creating context menu. Current nativeTheme.themeSource: ${nativeTheme.themeSource}`);

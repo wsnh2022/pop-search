@@ -3,7 +3,7 @@ if (process.env.ELECTRON_RUN_AS_NODE) {
     delete process.env.ELECTRON_RUN_AS_NODE;
 }
 
-import { app, screen } from 'electron';
+import { app, screen, nativeTheme } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { createMainWindow, createPopup } from './windowManager.js';
@@ -30,6 +30,7 @@ logToFile(`Resources Path: ${process.resourcesPath}`);
 // Performance: Disable GPU to save RAM
 app.disableHardwareAcceleration();
 app.setAppUserModelId('com.popsearch.beta');
+nativeTheme.themeSource = 'dark';
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=128');
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -56,30 +57,24 @@ if (!gotTheLock) {
     });
 
     app.whenReady().then(() => {
-        logToFile('app.whenReady triggered');
         const mainWindow = createMainWindow();
         registerIpcHandlers();
         startServer();
 
         try {
-            logToFile('Calling createTray()...');
             createTray();
-            logToFile('createTray() returned.');
         } catch (err) {
             logToFile(`createTray failed: ${err.message}`);
         }
 
         try {
-            logToFile('Calling startAhk()...');
-            startAhk(); // Start the AHK trigger script
-            logToFile('startAhk() returned.');
+            startAhk();
         } catch (err) {
             logToFile(`startAhk failed: ${err.message}`);
         }
 
         const isSearch = process.argv.some(arg => arg.startsWith('--search='));
         if (!isSearch) {
-            logToFile('Showing main window (default behavior)');
             mainWindow.show();
         }
     });

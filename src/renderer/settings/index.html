@@ -583,6 +583,89 @@
       background: #2196F3;
     }
 
+    /* Quick Select Category Labels */
+    .quick-select-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .quick-select-pill {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--subtitle-color);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .quick-select-pill:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-color);
+      color: var(--text-color);
+    }
+
+    .category-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      min-width: 140px;
+      margin-top: 6px;
+      display: none;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .category-dropdown.active {
+      display: block;
+      animation: dropdownFadeIn 0.2s ease-out;
+    }
+
+    @keyframes dropdownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .category-item {
+      padding: 8px 12px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      color: var(--text-color);
+    }
+
+    .category-item:hover {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .category-item.current {
+      font-weight: bold;
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 2px solid var(--accent-color);
+    }
+
     /* Improved Icons8 Link Styling */
     .icon-search-link {
       color: #3b82f6;
@@ -856,7 +939,7 @@
             <strong>🚀 Quick Start & Pro Tips</strong>
             <ul style="padding-left: 20px; font-size: 13px; margin-top: 8px;">
               <li><b>Select Text:</b> Highlight text in any app (Notepad, Word, Browser).</li>
-              <li><b>Trigger:</b> <b>Press Right Click briefly, then release</b> to open popup.</li>
+              <li><b>Trigger:</b> <b>Press Right Click</b> or <b>CapsLock + S</b> to open popup.</li>
               <li><b>Search:</b> <b>Left-click</b> any icon.</li>
               <li><b>Manage:</b> <b>Right-click</b> bar for menu.</li>
               <li><b>History:</b> Original clipboard is <b>restored</b>.</li>
@@ -869,7 +952,7 @@
                 style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 4px 0;">
                 <span>Show Search (Selected Text)</span>
                 <code
-                  style="background: var(--bg-color); padding: 2px 6px; border-radius: 4px;">Press & Release Right Click</code>
+                  style="background: var(--bg-color); padding: 2px 6px; border-radius: 4px;">Right Click / CapsLock + S</code>
               </div>
               <div
                 style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 4px 0;">
@@ -886,14 +969,9 @@
                 <span>Show "Unsorted" Bookmarks</span>
                 <div class="toggle" id="toggleUnsortedBtn"></div>
               </div>
-              <div
-                style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 8px 0; align-items: center;">
-                <span>Show "Import Dummy" Button</span>
-                <div class="toggle" id="toggleDummyBtn"></div>
-              </div>
             </div>
-            <p class="subtitle" style="margin-top: 24px; text-align: center; opacity: 0.6; font-size: 11px;">Pop Search
-              version 1.0.0 • Running in System Tray</p>
+            <p class="subtitle" style="margin-top: 24px; text-align: center; opacity: 0.6; font-size: 11px;">PopSearch
+              version 1.1.0-beta • Running in System Tray</p>
           </div>
         </section>
       </main>
@@ -903,13 +981,10 @@
       <div style="display: flex; gap: 8px;">
         <button class="secondary" onclick="window.bridge.exportConfig()" title="Export JSON">Export</button>
         <button class="secondary" onclick="window.bridge.importConfig()" title="Import JSON">Import</button>
-        <button class="secondary" id="importDummyBtn" onclick="window.ui.loadDummyData()"
-          title="Import Test Data from dummy.json" style="display: none;">Import Dummy</button>
-        <button class="secondary" onclick="window.electronAPI.reloadApp()" title="Reload App">Reload</button>
         <button class="danger" onclick="window.ui.resetConfig()" title="Reset All Settings">Reset</button>
       </div>
       <div style="flex-grow: 1;"></div>
-      <button class="primary" onclick="window.ui.saveAppearance()">Save Changes</button>
+      <button class="primary" onclick="window.electronAPI.reloadApp()" title="Reload All Windows">Reload App</button>
     </div>
   </div>
 
