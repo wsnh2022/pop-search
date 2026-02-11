@@ -8,7 +8,8 @@
 
 ### 🚀 Search in Action
 ![Search UI](assets/screenshots/main_popup.png)
-![Demo Video](https://github.com/user-attachments/assets/317ba541-bc16-42d7-aaec-0d2484a0c762)
+
+<video src="https://github.com/user-attachments/assets/317ba541-bc16-42d7-aaec-0d2484a0c762" controls="controls" style="max-width: 100%;"></video>
 
 ### ⚙️ Professional Settings
 ![Settings UI](assets/screenshots/settings.png)
