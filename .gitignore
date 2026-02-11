@@ -2,6 +2,7 @@ node_modules
 out/
 dist/
 docs/
+screenshot/
 MASTER_OVERVIEW.md
 *.log
 debug_log.txt

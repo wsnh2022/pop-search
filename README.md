@@ -8,7 +8,7 @@
 
 ### 🚀 Search in Action
 ![Search UI](assets/screenshots/main_popup.png)
-> *Placeholder for Demo Video: Drag your `3.mp4` into a GitHub Issue to get a link and paste it here!*
+![Demo Video](https://github.com/user-attachments/assets/317ba541-bc16-42d7-aaec-0d2484a0c762)
 
 ### ⚙️ Professional Settings
 ![Settings UI](assets/screenshots/settings.png)
