@@ -1,6 +1,6 @@
 {
   "name": "popsearch-v1",
-  "version": "1.0.0-beta",
+  "version": "1.1.0-beta",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
@@ -12,7 +12,7 @@
     "dist": "npm run build && electron-builder"
   },
   "description": "A lightweight frameless search popup triggered by a global shortcut.",
-  "author": "The Thinker",
+  "author": "PopSearch",
   "homepage": "https://github.com/the-thinker/popsearch-v1",
   "devDependencies": {
     "electron": "^40.2.1",
