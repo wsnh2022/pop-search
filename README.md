@@ -6,7 +6,10 @@
 ![Electron](https://img.shields.io/badge/Electron-4B32C3?logo=electron&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 
-PopSearch is a lightweight search tool for Windows that triggers a customizable search popup from any selected text using a global hotkey. It enables instant searching without the need for manual copy-pasting into a browser.
+PopSearch is a lightweight, high-performance search tool built for **Windows**. It triggers a customizable search popup from any selected text using a global hotkey. 
+
+> [!NOTE]  
+> Currently, PopSearch is Windows-only due to its high-speed AutoHotkey trigger engine. macOS and Linux support are in the exploratory phase.
 
 ---
 
@@ -29,7 +32,7 @@ PopSearch monitors for a specific trigger (Right-Click or CapsLock + S) after te
 Download the latest version from the [Releases](https://github.com/wsnh2022/pop-search/releases) page.
 
 ### Requirements
-- **OS**: Windows 10 or later (64-bit).
+- **OS**: Windows 10 or later (64-bit). *(macOS/Linux not supported)*.
 - **Dependencies**: No additional software is required for the portable version.
 
 ### Steps
