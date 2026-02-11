@@ -11,9 +11,13 @@
 
 <video src="https://github.com/user-attachments/assets/317ba541-bc16-42d7-aaec-0d2484a0c762" controls="controls" style="max-width: 100%;"></video>
 
+> **⌨️ Keyboard:** Hold `CapsLock` + press `S`  
+> **🖱️ Mouse:** Hold `Right-Click` (200ms)
+
 ### ⚙️ Professional Settings
 ![Settings UI](assets/screenshots/settings.png)
-> *Placeholder for Settings Video: Drag your `settings.mp4` into a GitHub Issue to get a link and paste it here!*
+
+> **⚡ Setup:** Customize your providers, accent colors, and glow intensity in real-time.
 
 ---
 
