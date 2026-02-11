@@ -1,0 +1,11 @@
+node_modules
+out/
+dist/
+docs/
+MASTER_OVERVIEW.md
+*.log
+debug_log.txt
+.idea
+.vscode
+.DS_Store
+assets/pop_search_trigger.exe
