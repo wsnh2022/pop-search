@@ -25,6 +25,7 @@
 <div align="center">
   <video src="https://github.com/user-attachments/assets/aafbf0a8-9f01-4919-9573-3f5073664690" controls="controls" style="max-width: 100%; border-radius: 10px;"></video>
 </div>
+
 ---
 
 ## 🎨 Why PopSearch 1.0 Beta? (The Professional Edge)
