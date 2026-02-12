@@ -1,4 +1,4 @@
-# 🚀 PopSearch v1.1.0-beta - Professional Assistant
+# 🚀 PopSearch v1.1.0-beta - Instant Search Assistant
 
 [![Version](https://img.shields.io/badge/version-v1.1.0--beta-blue)](https://github.com/wsnh2022/pop-search/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078d7.svg?logo=windows&logoColor=white)](https://github.com/wsnh2022/pop-search)
@@ -53,6 +53,9 @@ Download the latest version from the [Releases](https://github.com/wsnh2022/pop-
    - Use the search bar for manual overrides or refined queries.
 
 ### Visual Guide
+
+#### ⌨️ 0. Triggering the Popup
+![Shortcuts Map](assets/screenshots/shortcuts_map.png)
 
 #### ⚡ 1. The Instant Search Interface
 ![Search UI](assets/screenshots/main_popup.png)
