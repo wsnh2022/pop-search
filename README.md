@@ -6,129 +6,184 @@
 ![Electron](https://img.shields.io/badge/Electron-4B32C3?logo=electron&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 
-PopSearch is a lightweight, high-performance search tool built for **Windows**. It triggers a customizable search popup from any selected text using a global hotkey. 
+PopSearch triggers a customizable search popup from selected text using a global hotkey. Select text in any application, trigger with Right-Click Hold or CapsLock + S, and instantly search across your favorite search engines, AI tools, and bookmarks.
 
-> [!NOTE]  
-> Currently, PopSearch is Windows-only due to its high-speed AutoHotkey trigger engine. macOS and Linux support are in the exploratory phase.
+> **Windows 10+ only.** macOS/Linux not supported.
 
 ---
 
 ## 🔍 What It Does
 
-PopSearch monitors for a specific trigger (Right-Click or CapsLock + S) after text has been selected in any application. It then displays a sleek, transparent interface containing your favorite search engines, AI tools, and bookmarks.
-
 ### Key Features
-- **Auto-Save System**: All appearance settings (colors, sizes, layout) are saved instantly as you modify them.
-- **True Transparency**: A floating, glassmorphism-inspired UI that blends with your workspace.
-- **Customizable Search Providers**: Add any website using a `{query}` placeholder. Includes 40+ pre-loaded providers.
-- **Bulk Import**: Quickly add dozens of search engines via TSV or Markdown format.
-- **Portable Version**: Single-file executable requiring no installation.
+- **Search Anywhere**: Select text in any app → trigger popup → search across 40+ pre-loaded engines instantly
+- **Smart Triggers**: CapsLock + S (keyboard) or Right-Click Hold (mouse) — choose what fits your workflow
+- **Infinite Extensibility**: Add any website using `{query}` placeholder, organize into custom groups, bulk import via TSV/Markdown
+- **Beautiful & Customizable**: Full theme control with custom colors, icon sizes, spacing, and transparency
+- **Portable & Private**: Single-file executable (~95 MB), no installation, no telemetry, settings auto-save locally
 
 ---
 
-## 📦 Installation
+## 📸 Visual Guide
 
-### Pre-built Binary
-Download the latest version from the [Releases](https://github.com/wsnh2022/pop-search/releases) page.
-
-### Requirements
-- **OS**: Windows 10 or later (64-bit). *(macOS/Linux not supported)*.
-- **Dependencies**: No additional software is required for the portable version.
-
-### Steps
-1. Download `PopSearch-1.1.0-beta-portable.exe`.
-2. Move it to a folder of your choice (e.g., Desktop or Documents).
-3. Run the application; it will reside in your System Tray.
-
----
-
-## ⚡ Usage
-
-1. **Select Text**: Highlight text in any application (Browser, PDF, IDE, etc.).
-2. **Trigger Popup**:
-   - **Keyboard**: Press `CapsLock + S`.
-   - **Mouse**: Release the `Right Mouse Button` after a brief hold.
-3. **Execute Search**:
-   - Left-click a provider icon to search in your default browser.
-   - Use the search bar for manual overrides or refined queries.
-
-### Visual Guide
-
-#### ⌨️ 0. Triggering the Popup
-![Shortcuts Map](assets/screenshots/shortcuts_map.png)
-
-#### ⚡ 1. The Instant Search Interface
+### The Instant Search Interface
 ![Search UI](assets/screenshots/main_popup.png)
 
 <div align="center">
   <video src="https://github.com/user-attachments/assets/317ba541-bc16-42d7-aaec-0d2484a0c762" controls="controls" style="max-width: 100%; border-radius: 10px;"></video>
 </div>
 
-#### 🎨 2. The Settings Center
+### The Settings Center
 ![Settings UI](assets/screenshots/settings.png)
 
 <div align="center">
   <video src="https://github.com/user-attachments/assets/aafbf0a8-9f01-4919-9573-3f5073664690" controls="controls" style="max-width: 100%; border-radius: 10px;"></video>
 </div>
 
+### Trigger Methods
+![Shortcuts Map](assets/screenshots/shortcuts_map.png)
+
+---
+
+## 📦 Installation
+
+### Requirements
+- **OS**: Windows 10 or later (64-bit)
+- **Disk Space**: ~95 MB (portable version)
+- **RAM**: ~60-80 MB idle
+- **Dependencies**: None (portable version)
+
+### Steps
+1. Download `PopSearch-1.1.0-beta-portable.exe` from [Releases](https://github.com/wsnh2022/pop-search/releases)
+2. Move to desired folder (Desktop, Documents, etc.)
+3. Run the application → appears in System Tray
+
+---
+
+## ⚡ Usage
+
+### Trigger Methods
+
+**CapsLock + S**
+- Works with or without selected text
+- Type directly or search selection
+
+**Right-Click Hold (200ms)**
+- Select text, then hold right-click
+
+### Basic Workflow
+1. **Select Text**: Highlight text in any application (Browser, PDF, IDE)
+2. **Trigger Popup**: CapsLock + S or Right-Click Hold
+3. **Execute Search**: Left-click a provider icon to search in default browser
+
 ---
 
 ## ⚙️ Configuration
 
-### Managing Providers
-Under the **Providers** tab in settings, you can add new search engines. Use the `{query}` placeholder for the search term.
+### Adding Search Providers
+Under **Providers** tab in settings, add search engines using `{query}` placeholder.
 - Example: `https://www.google.com/search?q={query}`
 
+**Custom Icons**: Search icon names at [icons8.com](https://icons8.com/), copy Base64 or URL, paste into Settings for live preview.
+
+![Get Icon](assets/screenshots/geticon.png)
+
+![Search Providers](assets/screenshots/search_provider.png)
+
+### Bulk Import
+Organize bookmarks in Excel with columns: Category, Name, URL (with/without `{query}`), optional icon path. Use **Bulk Import** in Settings to add all at once.
+
+![Bulk Import](assets/screenshots/Bulk_Import.png)
+
+<details>
+<summary>💡 Example Custom URLs</summary>
+
+**Maps & Location**
+- Google Maps: `https://www.google.com/maps/search/{query}`
+- OpenStreetMap: `https://www.openstreetmap.org/search?query={query}`
+
+**Entertainment**
+- Spotify: `https://open.spotify.com/search/{query}`
+- IMDb: `https://www.imdb.com/find?q={query}`
+
+**Shopping**
+- eBay: `https://www.ebay.com/sch/i.html?_nkw={query}`
+- Yelp: `https://www.yelp.com/search?find_desc={query}`
+
+**Professional**
+- Indeed: `https://www.indeed.com/jobs?q={query}`
+
+**Learning**
+- Coursera: `https://www.coursera.org/search?query={query}`
+- Udemy: `https://www.udemy.com/courses/search/?q={query}`
+
+</details>
+
 ### Appearance Settings
-Customize accent colors, icon sizes, grid spacing, and transparency. Changes are applied in real-time and saved automatically.
+Customize accent colors, icon sizes, grid spacing, transparency. Changes apply in real-time and save automatically.
 
 ### Application Control
-- **Reload/Quit**: Right-click the tray icon or right-click anywhere on the search bar UI to access the management menu.
+Right-click tray icon or search bar UI to access Reload/Quit menu.
 
 ---
 
 ## 🛠️ Development
 
 ### Requirements
-- **Node.js**: 18.x or later.
-- **npm**: 9.x or later.
-- **AutoHotkey**: v2 (required for building the trigger engine).
+- Node.js 18.x+
+- npm 9.x+
+- AutoHotkey v2 (for building trigger engine)
 
 ### Build from Source
 ```bash
-# Clone the repository
 git clone https://github.com/wsnh2022/pop-search.git
 cd pop-search
-
-# Install dependencies
 npm install
 
-# Build the AHK trigger and application
+# Build AutoHotkey trigger (.ahk → .exe)
+# Compiles .ahk/pop_search_trigger.ahk → assets/pop_search_trigger.exe
+npm run build:ahk
+
+# Build Electron application (output: dist/)
 npm run build
 
-# Start the application in development mode
+# Or build both at once
+npm run build  # Runs build:ahk then electron-vite build
+
+# Start in development mode (requires AHK binary compiled first)
 npm start
 ```
 
+**Build outputs:**
+- `assets/pop_search_trigger.exe` - Compiled AutoHotkey trigger
+- `dist/` - Final Electron application (installer + portable)
+
 ### Project Structure
-- `src/main`: Main process handles window lifecycles and IPC.
-- `src/renderer`: Frontend UI (Vanilla JS + CSS).
-- `src/preload`: Secure bridge between processes.
-- `.ahk`: Source code for the global hotkey trigger.
+- `src/main`: Main process (window lifecycles, IPC)
+- `src/renderer`: Frontend UI (Vanilla JS + CSS)
+- `src/preload`: Secure bridge between processes
+- `.ahk`: Global hotkey trigger source
 
 ---
 
 ## 🛑 Troubleshooting
 
-- **Hotkey Conflict**: If `CapsLock + S` is used by another application, the trigger might fail. Use Right-Click as an alternative.
-- **AHK Compilation**: If `npm run build` fails, ensure AutoHotkey v2 is correctly installed and in your system PATH.
-- **Icons Not Loading**: Ensure you have an active internet connection for favicon fetching, or use Emojis/Base64 strings.
+- **Hotkey Conflict**: If `CapsLock + S` conflicts with another app, use Right-Click instead
+- **AHK Compilation**: Ensure AutoHotkey v2 is in system PATH
+- **Icons Not Loading**: Requires internet connection for favicon fetching, or use Emojis/Base64
+
+---
+
+## 🔒 Privacy
+
+- **No telemetry, analytics, or network requests** except favicon fetching
+- All settings stored locally in `%APPDATA%/PopSearch/config.json` (or portable directory)
+- **No data leaves your machine**
 
 ---
 
 ## 📜 License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
