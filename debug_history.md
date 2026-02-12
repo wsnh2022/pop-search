@@ -65,9 +65,54 @@ Unintentional staging of binaries (`.exe`) and media (`.mp4`) to the GitHub repo
 3.  **Efficiency over Eagerness (DOM Management):** Pre-rendering complex UI elements for large lists leads to exponential RAM usage. Only render what the user is interacting with (on-demand rendering).
 4.  **Diagnostic Presence:** Build-time logging (`logToTerminal`) is essential for remote debugging. When a user reports a "freeze," the terminal logs should show exactly which function failed.
 5.  **Memory Awareness:** For portable Electron apps, default memory limits are often too low. Explicitly managing `--max-old-space-size` is critical for memory-intensive applications.
-6.  **Window Level Discipline:** Use the lowest `alwaysOnTop` level necessary. Higher levels (like `screen-saver`) should be reserved for critical triggers.
 7.  **Modern Tooling (Vite):** Use **Vite** (via `electron-vite`) for bundling. It provides much faster reload times and more efficient production builds (tree-shaking and minification) compared to legacy bundlers, leading to better runtime optimization.
+
+## Advanced Architectural Lessons (Project-Specific)
+
+Based on the structure of **PopSearch v3**, here are deeper lessons for "Dynamic & Bug-Free" scaling:
+
+1.  **The "Bridge" Pattern for Interoperability:** 
+    *   Using an internal HTTP server (`triggerServer.js`) to bridge AHK and Electron is a powerful way to avoid complex win32 API calls within Node. 
+    *   *Dynamic Tip:* To make this "dynamic," ensure the port is configurable or uses a "find-available-port" logic to prevent conflicts if multiple users run the app on the same network or machine.
+
+2.  **State-First Rendering (Decoupling Data from UI):** 
+    *   In `ui.js`, we saw that rendering is often tied directly to DOM queries. 
+    *   *Bug-Free Tip:* Transition towards a "State -> Render" flow where you update a JS object first, and a single `render()` function updates the entire view. This prevents "Index Shifting" bugs (like the one fixed in `removeProvider`).
+
+3.  **Cross-Window Focus Orchestration:** 
+    *   The app has a specific check to "Ignore Popup if Settings focused." This is great for UX but dangerous if the Settings window enters a "ghost focus" state.
+    *   *Implementation Method:* Implement a "Global Window Manager" that tracks focus states across *all* windows in a central Main-process variable, rather than letting windows "guess" each other's state.
+
+4.  **Storage Scalability (Moving beyond LocalStorage):** 
+    *   `localStorage` is synchronous and limited to ~5MB. As your "Bulk Import" feature grows, it might hit a wall.
+    *   *Future-Proofing:* Consider moving to an asynchronous IPC-based storage (like `electron-store` or a simple JSON file with `fs.promises`) to prevent the Renderer from blocking while saving large lists.
+
+5.  **Graceful Resource Disposal:** 
+    *   The internal AHK and HTTP servers must be explicitly closed during `app.on('before-quit')`. 
+    *   *Stability Tip:* Always use "Cleanup Manifests." Maintain an array of active resources (processes, servers, intervals) and loop through it on exit to ensure no "Zombie" AHK processes are left in the User's background.
+
+## Moving Beyond AutoHotkey: Dynamic Trigger Alternatives
+
+While AHK is powerful on Windows, it creates a dependency on an external language and is platform-locked. For future "Dynamic" projects, consider these fully-integrated alternatives:
+
+1.  **uiohook-napi (Recommended for Node.js):**
+    *   **What it is:** A native Node.js wrapper for `libuiohook`.
+    *   **The Benefit:** It allows you to listen to global keyboard and mouse events directly inside Electron's **Main Process** without any external scripts.
+    *   **Capture Strategy:** You can listen for your trigger key, then use a library like `robotjs` or `nut-js` to simulate `Ctrl+C`, read the clipboard, and trigger your popup instantly.
+
+2.  **Native Electron `globalShortcut` + Clipboard Sync:**
+    *   **What it is:** The built-in Electron module.
+    *   *Limit:* It doesn't provide "event-swallowing" (preventing the key from reaching other apps) as easily as AHK.
+    *   **Modern Twist:** Use this for simple triggers, and pair it with a Main-process "Clipboard Listener" to detect when the user has highlighted text.
+
+3.  **Rust/Tauri "Sidecar" (High Performance):**
+    *   **What it is:** Write a tiny Rust binary using the `enigo` or `rdev` crates.
+    *   **The Benefit:** Extremely low latency and cross-platform (Windows/Mac/Linux). Electron can launch this as a "sidecar" process, communicating via `stdio` instead of a local HTTP server.
+
+4.  **C# / .NET Hook (Windows Optimized):**
+    *   **What it is:** A small invisible C# `.exe` that uses `SetWindowsHookEx`.
+    *   **The Benefit:** Much more stable and "standard" than AHK for professional Windows software. You can compile this into your `assets` and talk to it via IPC.
 
 ---
 
-**Current Status:** All identified bugs resolved. Settings panel is stable and responsive.
+**Current Status:** All identified bugs resolved. Settings panel is stable and responsive. Documentation updated for future scaling and AHK replacement strategies.
