@@ -8,7 +8,7 @@
 
 PopSearch triggers a customizable search popup from selected text using a global hotkey. Select text in any application, trigger with Right-Click Hold or CapsLock + S, and instantly search across your favorite search engines, AI tools, and bookmarks.
 
-> **Windows 10+ only.** macOS/Linux not supported.
+> **Windows 10+ only.** macOS/Linux not supported Currently.
 
 ---
 
@@ -155,7 +155,7 @@ npm start
 
 **Build outputs:**
 - `assets/pop_search_trigger.exe` - Compiled AutoHotkey trigger
-- `dist/` - Final Electron application (installer + portable)
+- `dist/` - Final Electron application (portable version)
 
 ### Project Structure
 - `src/main`: Main process (window lifecycles, IPC)
