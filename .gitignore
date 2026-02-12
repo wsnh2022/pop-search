@@ -10,3 +10,5 @@ debug_log.txt
 .vscode
 .DS_Store
 assets/pop_search_trigger.exe
+*.exe
+*.mp4

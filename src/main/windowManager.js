@@ -33,8 +33,8 @@ export function createMainWindow() {
         }
     });
 
-    // Force always on top at a higher level than normal
-    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    // Force always on top at a standard level
+    mainWindow.setAlwaysOnTop(true);
     mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
 

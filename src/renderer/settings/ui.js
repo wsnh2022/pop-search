@@ -8,95 +8,124 @@ let editingCatName = null;
 let searchQuery = '';
 
 export function initUI() {
+    const log = (msg) => {
+        console.log(`[Settings UI] ${msg}`);
+        if (window.electronAPI) window.electronAPI.logToTerminal(msg);
+    };
+
+    log('Initializing Settings UI...');
+
     try {
-        const settings = Store.getAppearance();
+        // 1. Load Data
+        let settings;
+        try {
+            settings = Store.getAppearance();
+            providers = Store.getProviders();
+            categories = Store.getCategories();
+            log('Data loaded successfully.');
+        } catch (e) {
+            log(`CRITICAL: Data load failed: ${e.message}`);
+            settings = DEFAULT_APPEARANCE;
+        }
 
-        const elements = ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontColor', 'bgColor', 'providerCategory', 'providers', 'categories'];
-        elements.forEach(id => {
-            if (!document.getElementById(id)) console.warn(`Missing DOM element: ${id}`);
-        });
-
-        // Map appearance settings to DOM
-        document.getElementById('iconSize').value = settings.iconSize;
-        document.getElementById('iconsPerRow').value = settings.iconsPerRow;
-        document.getElementById('gridGapX').value = settings.gridGapX || DEFAULT_APPEARANCE.gridGapX;
-        document.getElementById('gridGapY').value = settings.gridGapY || DEFAULT_APPEARANCE.gridGapY;
-        document.getElementById('fontWeight').value = settings.fontWeight || DEFAULT_APPEARANCE.fontWeight;
-        document.getElementById('fontColor').value = settings.fontColor || DEFAULT_APPEARANCE.fontColor;
-        document.getElementById('bgColor').value = settings.bgColor || DEFAULT_APPEARANCE.bgColor;
-        document.getElementById('accentColor').value = settings.accentColor || DEFAULT_APPEARANCE.accentColor;
-        document.getElementById('tabActiveBg').value = settings.tabActiveBg || DEFAULT_APPEARANCE.tabActiveBg;
-
-        // Update color previews
-        updateColorPreview('fontColor', 'fontColorPreview');
-        updateColorPreview('bgColor', 'bgColorPreview');
-        updateColorPreview('accentColor', 'accentColorPreview');
-        updateColorPreview('tabActiveBg', 'tabActiveBgPreview');
-
-        // Add color input listeners
-        const saveSilently = () => saveAppearance(true);
-
-        ['fontColor', 'bgColor', 'accentColor', 'tabActiveBg'].forEach(id => {
+        // 2. Map Appearance to DOM (Individual Failure Protection)
+        const mapSetting = (id, value) => {
             const el = document.getElementById(id);
-            el.addEventListener('input', (e) => {
-                updateColorPreview(id, id + 'Preview');
-                saveSilently();
-            });
-        });
-
-        // Add numerical/select listeners
-        ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontWeight'].forEach(id => {
-            document.getElementById(id).addEventListener('change', saveSilently);
-        });
-
-
-        // Apply dark theme immediately
-        applyTheme('dark');
-
-        updateCategorySelects();
-        renderProviders();
-        renderCategories();
-
-        // Toggle Helper (Reusable for simple on/off toggles)
-        const setupToggle = (id, initialState, callback) => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.classList.toggle('active', initialState);
-            el.onclick = () => {
-                const isActive = el.classList.toggle('active');
-                if (callback) callback(isActive);
-                saveAppearance(true);
-            };
+            if (el) el.value = value;
+            else console.warn(`Element not found: ${id}`);
         };
 
+        try {
+            mapSetting('iconSize', settings.iconSize);
+            mapSetting('iconsPerRow', settings.iconsPerRow);
+            mapSetting('gridGapX', settings.gridGapX || DEFAULT_APPEARANCE.gridGapX);
+            mapSetting('gridGapY', settings.gridGapY || DEFAULT_APPEARANCE.gridGapY);
+            mapSetting('fontWeight', settings.fontWeight || DEFAULT_APPEARANCE.fontWeight);
+            mapSetting('fontColor', settings.fontColor || DEFAULT_APPEARANCE.fontColor);
+            mapSetting('bgColor', settings.bgColor || DEFAULT_APPEARANCE.bgColor);
+            mapSetting('accentColor', settings.accentColor || DEFAULT_APPEARANCE.accentColor);
+            mapSetting('tabActiveBg', settings.tabActiveBg || DEFAULT_APPEARANCE.tabActiveBg);
+            log('Appearance settings mapped to DOM.');
+        } catch (e) { log(`Error mapping appearance: ${e.message}`); }
 
-        // Unsorted Toggling Logic
-        setupToggle('toggleUnsortedBtn', settings.showUnsorted !== false, (isActive) => {
-            // No immediate UI action needed in settings, but state is saved on "Save Changes"
-        });
+        // 3. Update Previews
+        try {
+            updateColorPreview('fontColor', 'fontColorPreview');
+            updateColorPreview('bgColor', 'bgColorPreview');
+            updateColorPreview('accentColor', 'accentColorPreview');
+            updateColorPreview('tabActiveBg', 'tabActiveBgPreview');
+        } catch (e) { log(`Error updating previews: ${e.message}`); }
 
-        // Bulk Import Live Preview
-        const bulkPad = document.getElementById('bulkImportPad');
-        if (bulkPad) {
-            bulkPad.addEventListener('input', () => {
-                const items = parseBulkImport(bulkPad.value);
-                renderBulkPreview(items);
+        // 4. Setup Listeners (The "Broken Input" Suspect)
+        const saveSilently = () => saveAppearance(true);
+
+        try {
+            ['fontColor', 'bgColor', 'accentColor', 'tabActiveBg'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        updateColorPreview(id, id + 'Preview');
+                        saveSilently();
+                    });
+                }
             });
-        }
 
-        // Provider Search Logic
-        const providerSearch = document.getElementById('providerSearch');
-        if (providerSearch) {
-            providerSearch.addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase().trim();
-                renderProviders();
+            ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontWeight'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', saveSilently);
             });
-        }
+            log('Appearance listeners attached.');
+        } catch (e) { log(`Error attaching appearance listeners: ${e.message}`); }
 
-        console.log('Settings UI Initialized successfully.');
+        // 5. Build UI Elements
+        try {
+            applyTheme('dark');
+            updateCategorySelects();
+            renderProviders();
+            renderCategories();
+            log('UI Elements rendered (Providers/Categories).');
+        } catch (e) { log(`Error rendering UI elements: ${e.message}`); }
+
+        // 6. Setup Toggles and Specialized Elements
+        try {
+            const setupToggle = (id, initialState, callback) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.classList.toggle('active', initialState);
+                el.onclick = () => {
+                    const isActive = el.classList.toggle('active');
+                    if (callback) callback(isActive);
+                    saveAppearance(true);
+                };
+            };
+
+            setupToggle('toggleUnsortedBtn', settings.showUnsorted !== false, null);
+            log('Toggles initialized.');
+        } catch (e) { log(`Error setting up toggles: ${e.message}`); }
+
+        // 7. Input Pad and Search Logic (Critical for "Broken Type")
+        try {
+            const bulkPad = document.getElementById('bulkImportPad');
+            if (bulkPad) {
+                bulkPad.addEventListener('input', () => {
+                    const items = parseBulkImport(bulkPad.value);
+                    renderBulkPreview(items);
+                });
+            }
+
+            const providerSearch = document.getElementById('providerSearch');
+            if (providerSearch) {
+                providerSearch.addEventListener('input', (e) => {
+                    searchQuery = e.target.value.toLowerCase().trim();
+                    renderProviders();
+                });
+            }
+            log('Search and Bulk handlers attached.');
+        } catch (e) { log(`Error attaching input handlers: ${e.message}`); }
+
+        log('Settings UI Initialized successfully.');
     } catch (err) {
-        console.error('Failed to initialize UI:', err);
-        if (window.electronAPI) window.electronAPI.logToTerminal(`UI Init Error: ${err.message}`);
+        log(`FATAL: Settings UI failed to initialize: ${err.message}`);
     }
 }
 
@@ -115,6 +144,59 @@ export function showToast(message, type = 'info') {
         toast.className = '';
     }, 3000);
 }
+
+/**
+ * Custom non-blocking modal system
+ * @param {string} message 
+ * @param {object} options { title, confirmText, cancelText, showCancel }
+ * @returns {Promise<boolean>}
+ */
+export function showModal(message, options = {}) {
+    const {
+        title = 'Confirm Action',
+        confirmText = 'Confirm',
+        cancelText = 'Cancel',
+        showCancel = true
+    } = options;
+
+    return new Promise((resolve) => {
+        const overlay = document.getElementById('modalOverlay');
+        const titleEl = document.getElementById('modalTitle');
+        const msgEl = document.getElementById('modalMessage');
+        const confirmBtn = document.getElementById('modalConfirm');
+        const cancelBtn = document.getElementById('modalCancel');
+
+        if (!overlay || !titleEl || !msgEl || !confirmBtn || !cancelBtn) {
+            console.error('Modal elements missing');
+            resolve(confirm(message)); // Fallback
+            return;
+        }
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        confirmBtn.textContent = confirmText;
+        cancelBtn.textContent = cancelText;
+        cancelBtn.style.display = showCancel ? 'inline-flex' : 'none';
+
+        overlay.classList.add('active');
+
+        const cleanup = (result) => {
+            overlay.classList.remove('active');
+            confirmBtn.onclick = null;
+            cancelBtn.onclick = null;
+            resolve(result);
+        };
+
+        confirmBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
+
+        // Also allow closing by clicking overlay
+        overlay.onclick = (e) => {
+            if (e.target === overlay && showCancel) cleanup(false);
+        };
+    });
+}
+
 
 function updateCategorySelects() {
     const select = document.getElementById('providerCategory');
@@ -187,11 +269,14 @@ export function editCategory(name) {
     document.querySelector('#categories-list .add-section').scrollIntoView({ behavior: 'smooth' });
 }
 
-export function saveCategory() {
+export async function saveCategory() {
     const name = document.getElementById('catName').value.trim();
     let icon = document.getElementById('catIcon').value.trim();
 
-    if (!name || !icon) return alert('Please fill in both Name and Icon');
+    if (!name || !icon) {
+        await showModal('Please fill in both Name and Icon', { title: 'Missing Info', showCancel: false });
+        return;
+    }
 
     if (editingCatName && editingCatName !== name) {
         delete categories[editingCatName];
@@ -248,19 +333,26 @@ export function removeCategory(name) {
     }
 }
 
-export function searchIcons8() {
+export async function searchIcons8() {
     const name = document.getElementById('catName').value.trim();
-    if (!name) return alert('Please enter a category name first.');
+    if (!name) {
+        await showModal('Please enter a category name first.', { title: 'Missing Info', showCancel: false });
+        return;
+    }
     const url = `https://icons8.com/icons/set/${encodeURIComponent(name)}`;
     window.bridge.openExternal(url);
 }
 
-export function searchProviderIcons8() {
+export async function searchProviderIcons8() {
     const name = document.getElementById('providerName').value.trim();
-    if (!name) return alert('Please enter a provider name first.');
+    if (!name) {
+        await showModal('Please enter a provider name first.', { title: 'Missing Info', showCancel: false });
+        return;
+    }
     const url = `https://icons8.com/icons/set/${encodeURIComponent(name)}`;
     window.bridge.openExternal(url);
 }
+
 
 export function renderProviders() {
     const container = document.getElementById('providers');
@@ -335,13 +427,6 @@ export function renderProviders() {
         };
 
         const currentCatIcon = categories[catName] || (catName === 'Unsorted' ? '🔴' : '🔍');
-        const dropdownHtml = Object.keys(categories).map(cat => {
-            const icon = categories[cat] || (cat === 'Unsorted' ? '🔴' : '🔍');
-            let iconHtml = isImageSource(icon) ? `<img src="${icon}" style="width: 12px; height: 12px; object-fit: contain;">` : icon;
-            return `<div class="category-item ${cat === catName ? 'current' : ''}" onclick="window.ui.changeProviderCategory(${originalIndex}, '${cat}', event)">
-                ${iconHtml} ${cat}
-            </div>`;
-        }).join('');
 
         div.innerHTML = `
       <div class="provider-info" style="flex-grow: 1; cursor: pointer;" onclick="window.ui.editProvider(${originalIndex})" title="Click to Edit">
@@ -352,7 +437,7 @@ export function renderProviders() {
                     ${catIconHtml} ${catName}
                 </div>
                 <div id="qs-dropdown-${originalIndex}" class="category-dropdown no-drag">
-                    ${dropdownHtml}
+                    <!-- Category dropdown items will be generated on demand -->
                 </div>
             </div>
         </div>
@@ -432,55 +517,67 @@ export function toggleAddSection(containerId, forceExpand = null) {
 }
 
 export function updateIconPreview(inputId, previewId) {
-    const input = document.getElementById(inputId);
-    const preview = document.getElementById(previewId);
-    if (!input || !preview) return;
+    try {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (!input || !preview) return;
 
-    let value = input.value.trim();
+        let value = input.value.trim();
 
-    // Auto-clean Base64: If user pastes a full <img src="..."> tag
-    if (value.toLowerCase().startsWith('<img')) {
-        const match = value.match(/src=["']([^"']+)["']/i);
-        if (match && match[1]) {
-            value = match[1];
-            input.value = value; // Update input field instantly
-        }
-    }
-
-    if (!value) {
-        // Fallback: Check if URL field has a value (only for providers)
-        if (inputId === 'providerIcon') {
-            const urlInput = document.getElementById('providerUrl');
-            if (urlInput && urlInput.value.trim()) {
-                const favicon = getFaviconUrl(urlInput.value.trim());
-                if (favicon) {
-                    preview.innerHTML = `<img src="${favicon}" style="width: 24px; height: 24px; object-fit: contain;">`;
-                    return;
-                }
+        // Auto-clean Base64: If user pastes a full <img src="..."> tag
+        if (value.toLowerCase().startsWith('<img')) {
+            const match = value.match(/src=["']([^"']+)["']/i);
+            if (match && match[1]) {
+                value = match[1];
+                input.value = value; // Update input field instantly
             }
         }
-        preview.innerHTML = '';
-        return;
-    }
 
-    if (isImageSource(value)) {
-        preview.innerHTML = `<img src="${value}" style="width: 24px; height: 24px; object-fit: contain;">`;
-    } else {
-        preview.textContent = value;
-        preview.style.fontSize = '20px';
+        if (!value) {
+            // Fallback: Check if URL field has a value (only for providers)
+            if (inputId === 'providerIcon') {
+                const urlInput = document.getElementById('providerUrl');
+                if (urlInput && urlInput.value.trim()) {
+                    const favicon = getFaviconUrl(urlInput.value.trim());
+                    if (favicon) {
+                        preview.innerHTML = `<img src="${favicon}" style="width: 24px; height: 24px; object-fit: contain;">`;
+                        return;
+                    }
+                }
+            }
+            preview.innerHTML = '';
+            preview.textContent = '';
+            return;
+        }
+
+        if (isImageSource(value)) {
+            preview.innerHTML = `<img src="${value}" style="width: 24px; height: 24px; object-fit: contain;">`;
+        } else {
+            preview.textContent = value;
+            preview.style.fontSize = '20px';
+            preview.style.display = 'flex';
+            preview.style.alignItems = 'center';
+            preview.style.justifyContent = 'center';
+        }
+    } catch (e) {
+        console.error(`Error in updateIconPreview: ${e.message}`);
     }
 }
 
 export function updateGetIconLink(prefix) {
-    const nameInput = document.getElementById(prefix === 'provider' ? 'providerName' : 'catName');
-    const link = document.getElementById(prefix === 'provider' ? 'providerGetIconLink' : 'catGetIconLink');
-    if (!nameInput || !link) return;
+    try {
+        const nameInput = document.getElementById(prefix === 'provider' ? 'providerName' : 'catName');
+        const link = document.getElementById(prefix === 'provider' ? 'providerGetIconLink' : 'catGetIconLink');
+        if (!nameInput || !link) return;
 
-    const name = nameInput.value.trim();
-    if (name) {
-        link.textContent = `Find one for "${name}" on Icons8`;
-    } else {
-        link.textContent = `Find one for this name on Icons8`;
+        const name = nameInput.value.trim();
+        if (name) {
+            link.textContent = `Find one for "${name}" on Icons8`;
+        } else {
+            link.textContent = `Find one for this name on Icons8`;
+        }
+    } catch (e) {
+        console.error(`Error in updateGetIconLink: ${e.message}`);
     }
 }
 
@@ -554,8 +651,15 @@ export function cancelEdit() {
     toggleAddSection('providerAddSection', false);
 }
 
-export function removeProvider(index) {
-    if (confirm(`Remove ${providers[index].name}?`)) {
+export async function removeProvider(index) {
+    const p = providers[index];
+    const confirmed = await showModal(`Remove ${p.name}?`, {
+        title: 'Remove Provider',
+        confirmText: 'Remove',
+        cancelText: 'Cancel'
+    });
+
+    if (confirmed) {
         // State cleanup: If we are currently editing THIS provider, cancel the edit
         if (editingIndex === index) {
             cancelEdit();
@@ -571,6 +675,7 @@ export function removeProvider(index) {
         showToast('Provider removed.', 'info');
     }
 }
+
 
 export function saveAppearance(silent = false) {
     const iconSize = document.getElementById('iconSize')?.value || DEFAULT_APPEARANCE.iconSize;
@@ -605,12 +710,19 @@ export function saveAppearance(silent = false) {
 }
 
 
-export function resetConfig() {
-    if (confirm('Are you sure you want to reset ALL settings, categories, and providers to default? This cannot be undone.')) {
+export async function resetConfig() {
+    const confirmed = await showModal('Are you sure you want to reset ALL settings, categories, and providers to default? This cannot be undone.', {
+        title: 'Reset Settings',
+        confirmText: 'Reset Everything',
+        cancelText: 'Cancel'
+    });
+
+    if (confirmed) {
         localStorage.clear();
         window.location.reload();
     }
 }
+
 
 export function showSection(sectionId, element) {
     document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
@@ -744,9 +856,19 @@ export async function executeBulkImport() {
     if (!bulkPad) return;
 
     const newItems = parseBulkImport(bulkPad.value);
-    if (newItems.length === 0) return alert('No valid providers found to import.');
+    if (newItems.length === 0) {
+        await showModal('No valid providers found to import.', { title: 'Import Failed', showCancel: false });
+        return;
+    }
 
-    if (!confirm(`Import ${newItems.length} providers? This will merge them with your existing list.`)) return;
+    const confirmed = await showModal(`Import ${newItems.length} providers? This will merge them with your existing list.`, {
+        title: 'Confirm Bulk Import',
+        confirmText: 'Import Now',
+        cancelText: 'Cancel'
+    });
+
+    if (!confirmed) return;
+
 
     // 1. Update Categories if they don't exist
     const existingCats = Store.getCategories();
@@ -793,12 +915,27 @@ export function toggleQuickSelect(index, event) {
         event.preventDefault();
     }
     const dropdown = document.getElementById(`qs-dropdown-${index}`);
+    if (!dropdown) return;
+
     const wasActive = dropdown.classList.contains('active');
 
     // Close all other dropdowns
     document.querySelectorAll('.category-dropdown').forEach(d => d.classList.remove('active'));
 
     if (!wasActive) {
+        // Generate items on-demand
+        const p = providers[index];
+        const catName = p.category || 'Unsorted';
+
+        const dropdownHtml = Object.keys(categories).map(cat => {
+            const icon = categories[cat] || (cat === 'Unsorted' ? '🔴' : '🔍');
+            let iconHtml = isImageSource(icon) ? `<img src="${icon}" style="width: 12px; height: 12px; object-fit: contain;">` : icon;
+            return `<div class="category-item ${cat === catName ? 'current' : ''}" onclick="window.ui.changeProviderCategory(${index}, '${cat}', event)">
+                ${iconHtml} ${cat}
+            </div>`;
+        }).join('');
+
+        dropdown.innerHTML = dropdownHtml;
         dropdown.classList.add('active');
     }
 }

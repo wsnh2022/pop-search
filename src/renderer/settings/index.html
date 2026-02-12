@@ -689,6 +689,65 @@
     .dark-mode .icon-search-link:hover {
       color: #93c5fd;
     }
+
+    /* Custom Modal System */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-color);
+    }
+
+    .modal-message {
+      font-size: 14px;
+      color: var(--subtitle-color);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
   </style>
 </head>
 
@@ -988,7 +1047,19 @@
     </div>
   </div>
 
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-card">
+      <div id="modalTitle" class="modal-title">Confirm Action</div>
+      <div id="modalMessage" class="modal-message">Are you sure you want to proceed?</div>
+      <div class="modal-footer">
+        <button id="modalCancel" class="secondary">Cancel</button>
+        <button id="modalConfirm" class="primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="./main.js"></script>
 </body>
+
 
 </html>

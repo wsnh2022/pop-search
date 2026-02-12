@@ -31,7 +31,7 @@ logToFile(`Resources Path: ${process.resourcesPath}`);
 app.disableHardwareAcceleration();
 app.setAppUserModelId('com.popsearch.beta');
 nativeTheme.themeSource = 'dark';
-app.commandLine.appendSwitch('js-flags', '--max-old-space-size=128');
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512');
 
 const gotTheLock = app.requestSingleInstanceLock();
 
