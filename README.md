@@ -23,7 +23,7 @@ PopSearch triggers a customizable search popup from selected text using a global
 - **Default Browser Support**: Search queries and links now respect your system's default browser settings.
 - **Infinite Extensibility**: Add any website using `{query}` placeholder and organize into custom groups.
 - **Professional Logging**: Managed log rotation (5MB limit) to keep your system clean and optimized.
-- **Portable & Private**: Single-file executable (~95 MB), no installation, no telemetry, local auto-save.
+- **Portable & Private**: Single-file executable (~98 MB), no installation, no telemetry, local auto-save.
 
 ---
 
