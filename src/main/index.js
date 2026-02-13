@@ -12,7 +12,7 @@ import { createTray } from './trayManager.js';
 import { startServer } from './triggerServer.js';
 import { startAhk, stopAhk } from './ahkManager.js';
 
-import { logToFile } from './logger.js';
+import { logToFile, log } from './logger.js';
 
 // Global Error Handlers
 process.on('uncaughtException', (error) => {
@@ -24,6 +24,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 logToFile(`App starting. Is Packaged: ${app.isPackaged}`);
+logToFile(`Log File Path: ${log.transports.file.getFile().path}`);
 logToFile(`Exec Path: ${process.execPath}`);
 logToFile(`Resources Path: ${process.resourcesPath}`);
 

@@ -65,7 +65,13 @@ Unintentional staging of binaries (`.exe`) and media (`.mp4`) to the GitHub repo
 3.  **Efficiency over Eagerness (DOM Management):** Pre-rendering complex UI elements for large lists leads to exponential RAM usage. Only render what the user is interacting with (on-demand rendering).
 4.  **Diagnostic Presence:** Build-time logging (`logToTerminal`) is essential for remote debugging. When a user reports a "freeze," the terminal logs should show exactly which function failed.
 5.  **Memory Awareness:** For portable Electron apps, default memory limits are often too low. Explicitly managing `--max-old-space-size` is critical for memory-intensive applications.
-7.  **Modern Tooling (Vite):** Use **Vite** (via `electron-vite`) for bundling. It provides much faster reload times and more efficient production builds (tree-shaking and minification) compared to legacy bundlers, leading to better runtime optimization.
+6.  **Respect System Defaults (The Shell API):** Avoid manual `child_process.exec` for opening links or files. Using Electron's `shell.openExternal(url)` ensures that the user's preferred browser is always used, improving security and cross-platform reliability.
+7.  **Managed Logging & Rotation:** Never rely on simple file appending for long-term production use. Use a dedicated logging library (like `electron-log`) to handle automatic **log rotation** (e.g., 5MB limit) and prevent disk bloat.
+8.  **Portable-Safe Storage:** For portable apps, always store logs and data in the `app.getPath('userData')` directory. This guarantees write permissions even if the application is run from read-only media like a USB or a protected system folder.
+9.  **Modern Tooling (Vite):** Use **Vite** (via `electron-vite`) for bundling. It provides much faster reload times and more efficient production builds (tree-shaking and minification) compared to legacy bundlers, leading to better runtime optimization.
+10. **Build-Time File Locks (EBUSY Prevention):** When implementing a `clean` or `rimraf` step in your build process, remember that any running instance of your app (even a portable one) will lock its own binaries. Always ensure the application is **fully closed** (quit via system tray) before running build or distribution scripts to avoid "resource busy" errors.
+11. **ESM Module Consistency:** When using ES Modules (`import/export`) in Electron, avoid using legacy `require()` inside your main-process handlers. Mixed module types can lead to `ReferenceError` crashes. Stick to a consistent ESM workflow for all internal project files.
+12. **Graceful Fallbacks for File Access:** If your UI provides shortcuts to open specific files (like Debug Logs), always implement a fallback. If the specific file doesn't exist yet, have the system open the parent **folder** instead of doing nothing or crashing.
 
 ## Advanced Architectural Lessons (Project-Specific)
 
@@ -115,4 +121,103 @@ While AHK is powerful on Windows, it creates a dependency on an external languag
 
 ---
 
-**Current Status:** All identified bugs resolved. Settings panel is stable and responsive. Documentation updated for future scaling and AHK replacement strategies.
+---
+
+## 5. Default Browser Support
+**Problem:**  
+Links (search queries and Icons8 references) were hard-coded to open specifically in Google Chrome, which ignored the user's system preferences and failed if Chrome wasn't installed.
+
+**Root Cause:**  
+*   **Manual Execution:** `ipcHandlers.js` used `child_process.exec` to run platform-specific terminal commands (e.g., `start chrome`).
+
+**Solution:**  
+*   **Electron Shell API:** Replaced manual `exec` calls with `shell.openExternal(url)`. This ensures links open in the user's **Default Browser** and improves security by letting the OS handle the URI.
+
+---
+
+## 6. Managed Logging (Log Rotation)
+**Problem:**  
+The `debug_log.txt` file was growing indefinitely, potentially consuming significant disk space over time.
+
+**Root Cause:**  
+*   **Simple Append:** The logger used `fs.appendFileSync` without any size checks or rotation logic.
+
+**Solution:**  
+*   **Advanced Logging Engine:** Integrated `electron-log` to manage logs.
+*   **Auto-Rotation:** Configured a **5MB rotation limit**. Once a log exceeds 5MB, it is archived, and a fresh log is started.
+*   **Portable Reliability:** Switched to the library's default `userData` path, ensuring the **Portable Version** always has write permissions even if launched from read-only media.
+
+---
+
+## 7. Debug Log Shortcut (UI Access)
+**Problem:**  
+Finding the log file in the hidden `%AppData%` folder was difficult and unintuitive for standard users.
+
+**Root Cause:**  
+*   **Path Obscurity:** Users had to manually navigate to `AppData/Roaming/popsearch-v1/logs/`.
+
+**Solution:**  
+*   **Settings Integration:** Added an "Open Debug Log" row in the Shortcuts section.
+*   **Dynamic Resolution:** The button asks the Main process for the active log path (resolved by `electron-log`), ensuring it works perfectly even in **Portable mode** on different machines.
+*   **Auto-Locate:** Uses `shell.showItemInFolder` to open the directory and highlight the file instantly.
+
+---
+
+## 8. Build Optimization & Cleaning
+**Problem:**  
+The `dist` folder was not being fully overwritten, leading to potential artifacts or "ghost files" from previous versions remaining in the installer/portable package.
+
+**Root Cause:**  
+*   **Incremental Replacement:** `electron-builder` replaces specific files but doesn't wipe the directory by default.
+
+**Solution:**  
+*   **Fresh-Slate Workflow:** Introduced a `clean` script using **`rimraf`** to wipe the `dist` and `out` folders before every build.
+*   **Script Refactoring:** Updated `package.json` so that `npm run dist` automatically triggers the `clean` step, ensuring every compilation is 100% accurate.
+
+---
+
+## Professional Release Blueprint (Generic Guide for Any Project)
+
+Follow this universal sequence to ensure a reliable and professional deployment for any software project.
+
+### Phase 1: Development & Version Sanitization
+1.  **Functional Audit**: Run your application in the development environment and verify that all new features and bug fixes are working as expected.
+2.  **Version Synchronization**: Identify every location where the version number is hardcoded (e.g., `package.json`, `constants`, `UI headers`, `metadata`) and update them to the new version string (e.g., `1.x.x`).
+3.  **Clean Up Diagnostics**: 
+    *   Remove or comment out redundant `console.log` statements.
+    *   Ensure all diagnostic logs follow a consistent prefix (e.g., `[Main]`, `[Renderer]`).
+4.  **Audit Trail/Changelog**: Update your project's history file or `CHANGELOG.md` with a detailed entry for the new version.
+
+### Phase 2: Build Verification & Environment Prep
+1.  **Clear Build Cache**: Delete previous build artifacts (folders like `/dist`, `/out`, `/build`) to ensure no stale files contaminate the new version.
+2.  **Process Termination**: Ensure the application is **fully closed and not running in the background**. This prevents "Resource Busy (EBUSY)" errors which occur when the system locks binaries.
+3.  **Execute Build**: Run your production build or compilation command.
+4.  **Local Binary Test**: Navigate to your output directory and run the generated executable/package. Verify that the version number displayed in the UI matches the build.
+
+### Phase 3: Git & Repository Synchronization
+1.  **Stage All Changes**:
+    ```bash
+    git add .
+    ```
+2.  **Atomic Commit**: Create a commit with a clear, descriptive message.
+    ```bash
+    git commit -m "chore: release version [X.Y.Z]"
+    ```
+3.  **Annotated Tagging**: Create a tag that corresponds to the version in your configuration files.
+    ```bash
+    git tag -a v[X.Y.Z] -m "Release version [X.Y.Z]"
+    ```
+4.  **Push to Remote**: Push both your code and your tags to the repository.
+    ```bash
+    git push origin [main/branch-name] --tags
+    ```
+
+### Phase 4: Release Management (GitHub/Server Side)
+1.  **Draft Release**: On GitHub/GitLab, create a new Release based on the tag you just pushed.
+2.  **Drafting Notes**: Copy the summary of changes from your history/changelog into the release description.
+3.  **Binary Assets**: Upload all production-ready artifacts (Installers, Portables, Binaries) to the Release page.
+4.  **Final Quality Check**: Download the asset from the release page yourself to ensure the upload wasn't corrupted.
+
+---
+
+**Current Status:** Documentation upgraded to a dynamic "Blueprint" guide suitable for any software project. Project-specific versions remain updated to 1.2.0-beta.

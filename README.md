@@ -1,6 +1,6 @@
-# 🚀 PopSearch v1.1.0-beta - Instant Search Assistant
+# 🚀 PopSearch v1.2.0-beta - Instant Search Assistant
 
-[![Version](https://img.shields.io/badge/version-v1.1.0--beta-blue)](https://github.com/wsnh2022/pop-search/releases)
+[![Version](https://img.shields.io/badge/version-v1.2.0--beta-blue)](https://github.com/wsnh2022/pop-search/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078d7.svg?logo=windows&logoColor=white)](https://github.com/wsnh2022/pop-search)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Electron](https://img.shields.io/badge/Electron-4B32C3?logo=electron&logoColor=white)
@@ -17,11 +17,13 @@ PopSearch triggers a customizable search popup from selected text using a global
 ## 🔍 What It Does
 
 ### Key Features
-- **Search Anywhere**: Select text in any app → trigger popup → search across 40+ pre-loaded engines instantly
-- **Smart Triggers**: CapsLock + S (keyboard) or Right-Click Hold (mouse) — choose what fits your workflow
-- **Infinite Extensibility**: Add any website using `{query}` placeholder, organize into custom groups, bulk import via TSV/Markdown
-- **Beautiful & Customizable**: Full theme control with custom colors, icon sizes, spacing, and transparency
-- **Portable & Private**: Single-file executable (~95 MB), no installation, no telemetry, settings auto-save locally
+- **Search Anywhere**: Select text in any app → trigger popup → search across 40+ engines instantly.
+- **Smart Triggers**: Right-Click Hold or CapsLock + S — choose the trigger that fits your workflow.
+- **Help & Support**: Integrated troubleshooting guide and one-click access to debug logs in Settings.
+- **Default Browser Support**: Search queries and links now respect your system's default browser settings.
+- **Infinite Extensibility**: Add any website using `{query}` placeholder and organize into custom groups.
+- **Professional Logging**: Managed log rotation (5MB limit) to keep your system clean and optimized.
+- **Portable & Private**: Single-file executable (~95 MB), no installation, no telemetry, local auto-save.
 
 ---
 
@@ -50,12 +52,12 @@ PopSearch triggers a customizable search popup from selected text using a global
 
 ### Requirements
 - **OS**: Windows 10 or later (64-bit)
-- **Disk Space**: ~95 MB (portable version)
+- **Disk Space**: ~98 MB (portable version)
 - **RAM**: ~60-80 MB idle
 - **Dependencies**: None (portable version)
 
 ### Steps
-1. Download `PopSearch-1.1.0-beta-portable.exe` from [Releases](https://github.com/wsnh2022/pop-search/releases)
+1. Download `PopSearch-1.2.0-beta-portable.exe` from [Releases](https://github.com/wsnh2022/pop-search/releases)
 2. Move to desired folder (Desktop, Documents, etc.)
 3. Run the application → appears in System Tray
 

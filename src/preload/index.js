@@ -14,5 +14,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   showPopupContextMenu: () => ipcRenderer.send(IPC_CHANNELS.CONTEXT_MENU),
   saveConfig: (data) => ipcRenderer.invoke(IPC_CHANNELS.SAVE_CONFIG, data),
   loadConfig: () => ipcRenderer.invoke(IPC_CHANNELS.LOAD_CONFIG),
-  openExternal: (url) => ipcRenderer.send(IPC_CHANNELS.OPEN_EXTERNAL, url)
+  openExternal: (url) => ipcRenderer.send(IPC_CHANNELS.OPEN_EXTERNAL, url),
+  openLogFile: () => ipcRenderer.send(IPC_CHANNELS.OPEN_LOG_FILE)
 });

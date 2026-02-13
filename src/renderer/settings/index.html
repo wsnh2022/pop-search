@@ -747,7 +747,6 @@
       justify-content: flex-end;
       gap: 12px;
     }
-
   </style>
 </head>
 
@@ -775,7 +774,7 @@
           Categories</div>
         <div id="nav-bulk" class="sidebar-item" onclick="window.ui.showSection('bulk-import', this)">
           Bulk Import</div>
-        <div id="nav-advanced" class="sidebar-item" onclick="window.ui.showSection('shortcuts', this)">Shortcuts
+        <div id="nav-advanced" class="sidebar-item" onclick="window.ui.showSection('shortcuts', this)">Help & Support
         </div>
       </aside>
 
@@ -991,8 +990,8 @@
 
         <!-- Shortcuts Section -->
         <section id="shortcuts" class="section">
-          <h2>Help & Shortcuts</h2>
-          <p class="subtitle">Quick reference for application hotkeys.</p>
+          <h2>Help & Support</h2>
+          <p class="subtitle">Quick reference for application hotkeys and troubleshooting.</p>
 
           <div class="demo-text">
             <strong>🚀 Quick Start & Pro Tips</strong>
@@ -1028,9 +1027,19 @@
                 <span>Show "Unsorted" Bookmarks</span>
                 <div class="toggle" id="toggleUnsortedBtn"></div>
               </div>
+              <div
+                style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 12px 0; align-items: center;">
+                <div style="display: flex; flex-direction: column;">
+                  <span style="font-weight: 500;">Open Debug Log</span>
+                  <span style="font-size: 11px; color: var(--subtitle-color); opacity: 0.8;">Locate and open the log
+                    file.</span>
+                </div>
+                <button class="secondary" id="openLogBtn" style="padding: 6px 16px; font-size: 11px;">Open Log
+                  File</button>
+              </div>
             </div>
             <p class="subtitle" style="margin-top: 24px; text-align: center; opacity: 0.6; font-size: 11px;">PopSearch
-              version 1.1.0-beta • Running in System Tray</p>
+              version 1.2.0-beta • Running in System Tray</p>
           </div>
         </section>
       </main>

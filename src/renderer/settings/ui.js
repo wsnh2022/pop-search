@@ -100,7 +100,17 @@ export function initUI() {
             };
 
             setupToggle('toggleUnsortedBtn', settings.showUnsorted !== false, null);
-            log('Toggles initialized.');
+
+            const openLogBtn = document.getElementById('openLogBtn');
+            if (openLogBtn) {
+                openLogBtn.addEventListener('click', () => {
+                    log('Open Log File button clicked');
+                    if (window.electronAPI && window.electronAPI.openLogFile) {
+                        window.electronAPI.openLogFile();
+                    }
+                });
+            }
+            log('Toggles and buttons initialized.');
         } catch (e) { log(`Error setting up toggles: ${e.message}`); }
 
         // 7. Input Pad and Search Logic (Critical for "Broken Type")

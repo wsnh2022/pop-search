@@ -1,9 +1,10 @@
-import { ipcMain, BrowserWindow, dialog, clipboard, Menu, app, nativeTheme, screen } from 'electron';
+import { ipcMain, BrowserWindow, dialog, clipboard, Menu, app, nativeTheme, screen, shell } from 'electron';
 import fs from 'fs';
-import { exec } from 'child_process';
+import path from 'path';
 import { IPC_CHANNELS } from '../shared/constants';
 import { getMainWindow, getPopupWindow, createPopup } from './windowManager.js';
 import { updateTrayMenu } from './trayManager.js';
+import { log, logToFile } from './logger.js';
 
 export function registerIpcHandlers() {
     ipcMain.on(IPC_CHANNELS.SHOW_POPUP, (event, data) => {
@@ -34,12 +35,14 @@ export function registerIpcHandlers() {
 
 
     ipcMain.on(IPC_CHANNELS.SEARCH, (event, { provider, query }) => {
+        logToFile(`[IPC] Search triggered. Query: ${query}`);
         const searchUrl = provider.replace(/%s|{query}/g, encodeURIComponent(query));
         openInBrowser(searchUrl);
         closePopup();
     });
 
     ipcMain.on(IPC_CHANNELS.COPY_AND_SEARCH, (event, { provider, query }) => {
+        logToFile(`[IPC] Copy and Search triggered. Query: ${query}`);
         clipboard.writeText(query);
         const searchUrl = provider.replace(/%s|{query}/g, encodeURIComponent(query));
         openInBrowser(searchUrl);
@@ -147,16 +150,29 @@ export function registerIpcHandlers() {
     ipcMain.on(IPC_CHANNELS.OPEN_EXTERNAL, (event, url) => {
         openInBrowser(url);
     });
+
+    ipcMain.on(IPC_CHANNELS.OPEN_LOG_FILE, () => {
+        try {
+            console.log('[Main] Received open-log-file request');
+            const logPath = log.transports.file.getFile().path;
+            console.log(`[Main] Attempting to open log at: ${logPath}`);
+            if (fs.existsSync(logPath)) {
+                shell.showItemInFolder(logPath);
+            } else {
+                console.warn('[Main] Log file does not exist yet at:', logPath);
+                // Fallback: just open the logs folder
+                shell.openPath(path.dirname(logPath));
+            }
+        } catch (err) {
+            console.error('[Main] Failed to open log file:', err);
+        }
+    });
 }
 
 function openInBrowser(url) {
-    if (process.platform === 'win32') {
-        exec(`start chrome "${url}"`);
-    } else if (process.platform === 'darwin') {
-        exec(`open -a "Google Chrome" "${url}"`);
-    } else {
-        exec(`google-chrome "${url}" || chromium-browser "${url}"`);
-    }
+    shell.openExternal(url).catch(err => {
+        console.error(`[Main] Failed to open external URL: ${err}`);
+    });
 }
 
 function closePopup() {

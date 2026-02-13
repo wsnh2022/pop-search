@@ -7,25 +7,25 @@
     "popupMaxWidth": "0",
     "theme": "dark",
     "fontWeight": "500",
-    "fontColor": "#d4ff00",
-    "bgColor": "#330505",
-    "accentColor": "#ff0000",
-    "tabActiveBg": "#212121",
+    "fontColor": "#00f2ff",
+    "bgColor": "#13132a",
+    "accentColor": "#5900ff",
+    "tabActiveBg": "#1d1d1d",
     "customCSS": "",
     "showDummyBtn": false,
     "showUnsorted": false
   },
   "providers": [
     {
-      "name": "YouTube",
-      "url": "https://www.youtube.com/results?search_query={query}",
+      "name": "Google",
+      "url": "https://www.google.com/search?q={query}",
       "enabled": true,
       "category": "Search",
       "icon": ""
     },
     {
-      "name": "DuckDuckGo",
-      "url": "https://duckduckgo.com/?q={query}",
+      "name": "YouTube",
+      "url": "https://www.youtube.com/results?search_query={query}",
       "enabled": true,
       "category": "Search",
       "icon": ""
@@ -281,13 +281,6 @@
       "enabled": true,
       "category": "AI",
       "icon": ""
-    },
-    {
-      "name": "google",
-      "url": "www.google.com",
-      "icon": "https://img.icons8.com/cute-clipart/64/google-logo.png",
-      "enabled": true,
-      "category": ""
     }
   ],
   "categories": {
