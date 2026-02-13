@@ -5,7 +5,8 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Electron](https://img.shields.io/badge/Electron-4B32C3?logo=electron&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
-![Repository Views](https://komarev.com/ghpvc/?username=wsnh2022&repo=pop-search&label=Repository%20views&color=0e75b6&style=flat)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fwsnh2022%2Fpop-search&count_bg=%230e75b6&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=flat)](https://hits.seeyoufarm.com)
+
 
 PopSearch triggers a customizable search popup from selected text using a global hotkey. Select text in any application, trigger with Right-Click Hold or CapsLock + S, and instantly search across your favorite search engines, AI tools, and bookmarks.
 
