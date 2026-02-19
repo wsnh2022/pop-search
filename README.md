@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="assets/icon.png" alt="PopSearch" width="96" height="96" />
+  <h1>PopSearch</h1>
+</div>
+
 # 🚀 PopSearch v1.3.0-beta - Instant Search Assistant
 
 [![Version](https://img.shields.io/badge/version-v1.3.0--beta-blue)](https://github.com/wsnh2022/pop-search/releases)
@@ -13,6 +18,17 @@ PopSearch triggers a customizable search popup from selected text using a global
 ---
 
 ## 🔍 What It Does
+
+### 🆕 New in v1.3.0-beta
+
+| | Feature | Description |
+|---|---|---|
+| ⌨️ | **Keyboard Navigation** | Arrow keys move between icons, `Tab` switches categories, `Enter` launches, `Escape` closes. Mouse hover stays in sync. |
+| 🖥️ | **Script & File Launcher** | Run `.ahk`, `.py`, `.bat` scripts or open any local file/app directly from the popup using the new `File` and `Command` provider types. Smart detection auto-wraps Python and AHK runtimes. |
+| 🗂️ | **Category Drag-to-Reorder** | Drag category rows in Settings to rearrange their order. Reflected instantly in the popup tab bar and all dropdowns. |
+| 🖼️ | **Local Icon Support** | Paste a local `.ico`, `.png`, `.jpg`, `.svg`, `.webp`, or `.bmp` path into any icon field — auto-converted to portable Base64 on save. |
+
+---
 
 ### Key Features
 - **Search Anywhere**: Select text in any app → trigger popup → search across 40+ engines instantly.
