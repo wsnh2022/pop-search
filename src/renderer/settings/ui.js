@@ -248,12 +248,20 @@ export function renderCategories() {
 
         if (isImageSource(icon)) {
             const img = document.createElement('img');
-            img.src = icon;
+            img.src = toImageSrc(icon);
             img.style.width = '24px';
             img.style.height = '24px';
             img.style.objectFit = 'contain';
             img.style.marginRight = '15px';
             img.style.borderRadius = '4px';
+            // IPC fallback for local paths blocked by cross-origin policy in dev mode
+            img.onerror = () => {
+                if (/^[a-zA-Z]:[\\/]/.test(icon) && window.electronAPI?.readLocalIcon) {
+                    window.electronAPI.readLocalIcon(icon).then(dataUrl => {
+                        if (dataUrl) img.src = dataUrl;
+                    });
+                }
+            };
             div.prepend(img);
         } else {
             const iconDiv = document.createElement('div');
@@ -262,6 +270,9 @@ export function renderCategories() {
             iconDiv.textContent = icon;
             div.prepend(iconDiv);
         }
+        div.draggable = true;
+        div.dataset.catName = name; // Used by drag handler
+        setupCategoryDrag(div, name);
         container.appendChild(div);
     });
 }
@@ -412,7 +423,7 @@ export function renderProviders() {
         div.draggable = !searchQuery; // Disable drag during search to prevent confusion
         div.dataset.index = originalIndex;
 
-        const favicon = provider.icon || getFaviconUrl(provider.url);
+        const favicon = provider.icon ? toImageSrc(provider.icon) : getFaviconUrl(provider.url);
         const catName = provider.category || 'Unsorted';
         const iconValue = categories[catName] || (catName === 'Unsorted' ? '🔴' : '🔍');
 
@@ -433,13 +444,21 @@ export function renderProviders() {
         img.src = favicon;
         img.className = 'favicon';
         img.onerror = () => {
-            img.src = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2218%22 font-size=%2218%22>${provider.name[0]}</text></svg>`;
+            // If a local path fails (e.g., cross-origin in dev mode), retry via IPC
+            if (/^[a-zA-Z]:[\\/]/.test(provider.icon || '') && window.electronAPI?.readLocalIcon) {
+                window.electronAPI.readLocalIcon(provider.icon).then(dataUrl => {
+                    if (dataUrl) img.src = dataUrl;
+                    else img.src = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2218%22 font-size=%2218%22>${provider.name[0]}</text></svg>`;
+                });
+            } else {
+                img.src = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2218%22 font-size=%2218%22>${provider.name[0]}</text></svg>`;
+            }
         };
 
         const currentCatIcon = categories[catName] || (catName === 'Unsorted' ? '🔴' : '🔍');
 
         div.innerHTML = `
-      <div class="provider-info" style="flex-grow: 1; cursor: pointer;" onclick="window.ui.editProvider(${originalIndex})" title="Click to Edit">
+      <div class="provider-info" style="flex-grow: 1; min-width: 0; cursor: pointer;" onclick="window.ui.editProvider(${originalIndex})" title="Click to Edit">
         <div style="font-weight: bold; display: flex; align-items: center;">
             ${provider.name} 
             <div class="quick-select-container" onclick="event.stopPropagation()">
@@ -451,7 +470,7 @@ export function renderProviders() {
                 </div>
             </div>
         </div>
-        <div style="font-size: 12px; color: var(--url-color);">${provider.url}</div>
+        <div style="font-size: 12px; color: var(--url-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${provider.url}</div>
       </div>
       <div class="toggle ${provider.enabled ? 'active' : ''}" onclick="window.ui.toggleProvider(${originalIndex})"></div>
       <button class="edit-btn" onclick="window.ui.editProvider(${originalIndex})" draggable="false">Edit</button>
@@ -480,7 +499,25 @@ export function renderProviders() {
 function isImageSource(str) {
     if (!str) return false;
     const s = str.trim();
-    return s.startsWith('http') || s.startsWith('data:image') || s.startsWith('./') || s.startsWith('../');
+    return s.startsWith('http') ||
+        s.startsWith('data:image') ||
+        s.startsWith('./') ||
+        s.startsWith('../') ||
+        s.startsWith('file://') ||
+        /^[a-zA-Z]:[\\/]/.test(s); // Windows absolute path (C:\... or C:/...)
+}
+
+/**
+ * Converts a local Windows file path to a valid file:// URL for use in <img> src.
+ * Passes through all other sources (http, data:image, etc.) unchanged.
+ */
+function toImageSrc(str) {
+    if (!str) return str;
+    const s = str.trim();
+    if (/^[a-zA-Z]:[\\/]/.test(s)) {
+        return 'file:///' + s.replace(/\\/g, '/');
+    }
+    return s;
 }
 
 function getFaviconUrl(searchUrl) {
@@ -503,6 +540,50 @@ function setupDragAndDrop(div, index) {
             Store.saveProviders(providers);
             renderProviders();
         }
+    };
+}
+
+/**
+ * Drag-to-reorder for categories.
+ * Categories are stored as a plain object; reordering rebuilds the object
+ * in the new key-insertion order (JS objects preserve insertion order).
+ */
+function setupCategoryDrag(div, name) {
+    div.ondragstart = (e) => {
+        e.dataTransfer.setData('text/plain', name);
+        // Brief visual feedback on the dragged item
+        requestAnimationFrame(() => div.style.opacity = '0.4');
+    };
+    div.ondragend = () => { div.style.opacity = ''; };
+    div.ondragover = (e) => {
+        e.preventDefault();
+        div.style.outline = '2px solid var(--accent-color)';
+    };
+    div.ondragleave = () => { div.style.outline = ''; };
+    div.ondrop = (e) => {
+        e.preventDefault();
+        div.style.outline = '';
+        div.style.opacity = '';
+        const fromName = e.dataTransfer.getData('text/plain');
+        const toName = name;
+        if (fromName === toName) return;
+
+        // Rebuild the categories object in the new order
+        const keys = Object.keys(categories);
+        const fromIdx = keys.indexOf(fromName);
+        const toIdx = keys.indexOf(toName);
+        if (fromIdx < 0 || toIdx < 0) return;
+
+        keys.splice(fromIdx, 1);
+        keys.splice(toIdx, 0, fromName);
+
+        const reordered = {};
+        keys.forEach(k => { reordered[k] = categories[k]; });
+        categories = reordered;
+
+        Store.saveCategories(categories);
+        renderCategories();
+        updateCategorySelects();
     };
 }
 
@@ -561,6 +642,20 @@ export function updateIconPreview(inputId, previewId) {
         }
 
         if (isImageSource(value)) {
+            // Local Windows path: file:// is blocked from http:// origin in dev mode.
+            // Use IPC to load the file as a base64 data URL (works in dev + production).
+            if (/^[a-zA-Z]:[\\/]/.test(value) && window.electronAPI?.readLocalIcon) {
+                window.electronAPI.readLocalIcon(value).then(dataUrl => {
+                    if (dataUrl) {
+                        preview.innerHTML = `<img src="${dataUrl}" style="width: 24px; height: 24px; object-fit: contain;">`;
+                        // Auto-convert the raw path to portable base64 so saving/rendering works everywhere
+                        input.value = dataUrl;
+                    } else {
+                        preview.innerHTML = '<span title="File not found or unreadable" style="font-size:16px;">⚠️</span>';
+                    }
+                });
+                return; // Async path handled above
+            }
             preview.innerHTML = `<img src="${value}" style="width: 24px; height: 24px; object-fit: contain;">`;
         } else {
             preview.textContent = value;
@@ -597,11 +692,13 @@ export function editProvider(index) {
     const p = providers[index];
     document.getElementById('providerName').value = p.name;
     document.getElementById('providerUrl').value = p.url;
+    document.getElementById('providerType').value = p.type || 'url';
     document.getElementById('providerIcon').value = p.icon || '';
 
     // Normalize category value for select (data uses "" or "Unsorted" occasionally, UI wants "")
     document.getElementById('providerCategory').value = (p.category === 'Unsorted' || !p.category) ? "" : p.category;
 
+    onTypeChange(); // Update placeholders
     updateIconPreview('providerIcon', 'providerIconPreview');
     updateGetIconLink('provider');
     document.getElementById('formTitle').textContent = 'Edit Search Provider';
@@ -621,23 +718,24 @@ export function editProvider(index) {
 export function addProvider() {
     const nameInput = document.getElementById('providerName');
     const urlInput = document.getElementById('providerUrl');
+    const type = document.getElementById('providerType').value || 'url';
     const name = nameInput.value.trim();
     const url = urlInput.value.trim();
     const category = document.getElementById('providerCategory').value || ""; // Ensure empty string for Unsorted
     let icon = document.getElementById('providerIcon').value.trim();
 
     if (!name || !url) {
-        showToast('Please fill in Name and URL', 'error');
+        showToast('Please fill in Name and ' + (type === 'url' ? 'URL' : (type === 'file' ? 'Path' : 'Command')), 'error');
         if (!name) nameInput.focus();
         else urlInput.focus();
         return;
     }
 
     if (editingIndex >= 0) {
-        providers[editingIndex] = { ...providers[editingIndex], name, url, icon, category };
+        providers[editingIndex] = { ...providers[editingIndex], name, url, icon, category, type };
         showToast('Provider updated!', 'success');
     } else {
-        providers.push({ name, url, icon, enabled: true, category });
+        providers.push({ name, url, icon, enabled: true, category, type });
         showToast('Provider added!', 'success');
     }
 
@@ -650,15 +748,34 @@ export function cancelEdit() {
     editingIndex = -1;
     document.getElementById('providerName').value = '';
     document.getElementById('providerUrl').value = '';
+    document.getElementById('providerType').value = 'url';
     document.getElementById('providerIcon').value = '';
     document.getElementById('providerCategory').value = ''; // Reset to Default
+    onTypeChange();
     updateIconPreview('providerIcon', 'providerIconPreview');
     updateGetIconLink('provider');
     document.getElementById('formTitle').textContent = 'Add Custom Search Provider';
     document.getElementById('submitBtn').textContent = 'Add Provider';
-    document.getElementById('cancelBtn').style.display = 'none';
 
     toggleAddSection('providerAddSection', false);
+}
+
+export function onTypeChange() {
+    const type = document.getElementById('providerType').value;
+    const urlInput = document.getElementById('providerUrl');
+    if (!urlInput) return;
+
+    switch (type) {
+        case 'url':
+            urlInput.placeholder = 'URL with {query} (e.g. https://google.com/search?q={query})';
+            break;
+        case 'file':
+            urlInput.placeholder = 'Local Path (e.g. C:\\Windows\\notepad.exe)';
+            break;
+        case 'cmd':
+            urlInput.placeholder = 'Command or Script (e.g. python script.py "{query}")';
+            break;
+    }
 }
 
 export async function removeProvider(index) {
@@ -773,20 +890,21 @@ export function parseBulkImport(text) {
         const trimmed = line.trim();
         if (!trimmed) return;
 
-        // 1. Spreadsheet Format Check (Category\tName\tURL[\tIcon])
+        // 1. Spreadsheet Format Check (Category\tName\tURL[\tIcon][\tType])
         if (line.includes('\t')) {
             const parts = line.split('\t').map(p => p.trim());
 
             if (parts.length >= 3) {
-                // Category | Name | URL | [Icon]
-                const [cat, name, rawUrl, icon] = parts;
+                // Category | Name | URL | [Icon] | [Type]
+                const [cat, name, rawUrl, icon, type] = parts;
                 if (name && rawUrl) {
                     items.push({
                         name,
                         url: rawUrl.replace(/%s|{{searchTerms}}/g, '{query}'),
                         category: cat || 'General',
                         enabled: true,
-                        icon: icon || ''
+                        icon: icon || '',
+                        type: type || 'url'
                     });
                 }
                 return;
@@ -799,7 +917,8 @@ export function parseBulkImport(text) {
                         url: rawUrl.replace(/%s|{{searchTerms}}/g, '{query}'),
                         category: currentCategory,
                         enabled: true,
-                        icon: ''
+                        icon: '',
+                        type: 'url'
                     });
                 }
                 return;
@@ -833,7 +952,8 @@ export function parseBulkImport(text) {
                     url: urlPart,
                     category: currentCategory,
                     enabled: true,
-                    icon: icon
+                    icon: icon,
+                    type: 'url'
                 });
             }
         }
@@ -898,7 +1018,7 @@ export async function executeBulkImport() {
     const processedItems = newItems.map(item => {
         return {
             ...item,
-            icon: item.icon || getFaviconUrl(item.url)
+            icon: item.icon || ((item.type === 'url' || !item.type) ? getFaviconUrl(item.url) : '')
         };
     });
 

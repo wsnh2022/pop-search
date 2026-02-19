@@ -21,7 +21,7 @@ RButton::
     KeyWait "RButton"
     PressDuration := A_TickCount - StartTime
 
-    if (PressDuration < 200) {
+    if (PressDuration < 300) {
         Send("{RButton}")
     } else {
         TriggerPopup()

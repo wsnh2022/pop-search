@@ -4,11 +4,13 @@ let currentQuery = '';
 let currentCategory = 'Unsorted';
 let savedScrollPosition = 0;
 let wheelTimeout;
+let selectedIndex = -1; // -1 = no keyboard selection active
 
 document.addEventListener('DOMContentLoaded', () => {
     window.electronAPI.onSelectedText((text) => {
         currentQuery = text;
         savedScrollPosition = 0; // Always start from the first category
+        selectedIndex = -1;      // No keyboard selection until user presses an arrow key
 
         // Reset to first available category if needed, respecting settings
         const { activeCategories } = getFilteredData();
@@ -105,6 +107,24 @@ function applyTheme() {
     root.style.setProperty('--popup-max-width', `${maxWidth}px`);
 }
 
+/**
+ * Update the keyboard-focused icon.
+ * Clears old .focused, applies it to the new index, scrolls into view.
+ * Also syncs selectedIndex so Enter always knows which icon to launch.
+ */
+function setSelectedIndex(newIndex) {
+    const grid = document.querySelector('.icon-grid');
+    if (!grid) return;
+    const wrappers = [...grid.querySelectorAll('.provider-icon-wrapper')];
+    const count = wrappers.length;
+    if (count === 0) return;
+
+    const clamped = Math.max(0, Math.min(newIndex, count - 1));
+    wrappers.forEach((w, i) => w.classList.toggle('focused', i === clamped));
+    selectedIndex = clamped;
+    wrappers[clamped]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
 function updateIconGrid() {
     const providers = getProviders();
     const enabledProviders = providers.filter(p => p.enabled);
@@ -134,37 +154,56 @@ function updateIconGrid() {
 
     filteredProviders
         .filter(p => (p.category || 'Unsorted') === currentCategory)
-        .forEach(provider => {
+        .forEach((provider, i) => {
             const iconContainer = document.createElement('div');
             iconContainer.className = 'provider-icon-wrapper';
             iconContainer.setAttribute('data-tooltip', provider.name);
 
             const img = document.createElement('img');
-            img.src = provider.icon || getFaviconUrl(provider.url);
+            img.src = provider.icon ? toImageSrc(provider.icon) : getFaviconUrl(provider.url);
             img.className = 'provider-icon';
             img.style.width = `${iconSize}px`;
             img.style.height = `${iconSize}px`;
 
             // Error handling for icons to prevent blank spots
             img.onerror = () => {
-                img.src = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2218%22 font-size=%2218%22>${provider.name[0]}</text></svg>`;
+                // Retry via IPC for local paths blocked by cross-origin policy in dev mode
+                if (/^[a-zA-Z]:[\\/]/.test(provider.icon || '') && window.electronAPI?.readLocalIcon) {
+                    window.electronAPI.readLocalIcon(provider.icon).then(dataUrl => {
+                        if (dataUrl) img.src = dataUrl;
+                        else img.src = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2218%22 font-size=%2218%22>${provider.name[0]}</text></svg>`;
+                    });
+                } else {
+                    img.src = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2218%22 font-size=%2218%22>${provider.name[0]}</text></svg>`;
+                }
             };
 
             img.onclick = () => {
-                window.electronAPI.search(provider.url, currentQuery);
+                window.electronAPI.search(provider.url, currentQuery, provider.type);
             };
 
             // Middle click support
             img.onmousedown = (e) => {
                 if (e.button === 1) {
                     e.preventDefault();
-                    window.electronAPI.copyAndSearch(provider.url, currentQuery);
+                    window.electronAPI.copyAndSearch(provider.url, currentQuery, provider.type);
                 }
             };
+
+            // Mouse hover syncs the keyboard selection index (both methods stay in sync)
+            iconContainer.addEventListener('mouseenter', () => {
+                setSelectedIndex(i);
+            });
 
             iconContainer.appendChild(img);
             grid.appendChild(iconContainer);
         });
+
+    // Restore focused highlight after grid rebuild
+    if (selectedIndex >= 0) {
+        const wrappers = grid.querySelectorAll('.provider-icon-wrapper');
+        if (wrappers[selectedIndex]) wrappers[selectedIndex].classList.add('focused');
+    }
 
     // Resize after grid is updated (in case content height changed)
     requestAnimationFrame(() => {
@@ -222,16 +261,62 @@ function renderPopup() {
 
     searchInput.oninput = (e) => {
         currentQuery = e.target.value;
-        updateIconGrid(); // Update icons as user types
+        selectedIndex = 0; // Reset to first icon on every keystroke
+        updateIconGrid();
     };
 
+    // ─── Keyboard Navigation ───────────────────────────────────────────────
     searchInput.onkeydown = (e) => {
-        if (e.key === 'Enter') {
-            const { filteredProviders } = getFilteredData();
-            const firstProvider = filteredProviders.filter(p => (p.category || 'Unsorted') === currentCategory)[0];
-            if (firstProvider) {
-                window.electronAPI.search(firstProvider.url, currentQuery);
+        const grid = document.querySelector('.icon-grid');
+        const wrappers = grid ? [...grid.querySelectorAll('.provider-icon-wrapper')] : [];
+        const count = wrappers.length;
+        if (count === 0) return;
+
+        const iconsPerRow = parseInt(getComputedStyle(document.documentElement)
+            .getPropertyValue('--popup-max-width')) || 8;
+        // Measure actual icons per row from the DOM
+        const firstTop = wrappers[0]?.getBoundingClientRect().top;
+        const rowCount = wrappers.filter(w => w.getBoundingClientRect().top === firstTop).length || 1;
+
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            setSelectedIndex(selectedIndex < 0 ? 0 : (selectedIndex + 1) % count);
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            setSelectedIndex(selectedIndex <= 0 ? count - 1 : selectedIndex - 1);
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = selectedIndex < 0 ? 0 : selectedIndex + rowCount;
+            setSelectedIndex(next < count ? next : selectedIndex); // Don't wrap on down
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prev = selectedIndex - rowCount;
+            setSelectedIndex(prev >= 0 ? prev : selectedIndex); // Don't wrap on up
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            const { activeCategories } = getFilteredData();
+            const idx = activeCategories.indexOf(currentCategory);
+            if (e.shiftKey) {
+                currentCategory = activeCategories[(idx - 1 + activeCategories.length) % activeCategories.length];
+            } else {
+                currentCategory = activeCategories[(idx + 1) % activeCategories.length];
             }
+            selectedIndex = 0;
+            updateIconGrid();
+            updateCategoryLabel();
+            // Sync active tab highlight
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.cat === currentCategory);
+            });
+        } else if (e.key === 'Enter') {
+            const { filteredProviders } = getFilteredData();
+            const catProviders = filteredProviders.filter(p => (p.category || 'Unsorted') === currentCategory);
+            // Use focused icon if one is selected, otherwise launch first provider
+            const targetIndex = selectedIndex >= 0 && selectedIndex < catProviders.length ? selectedIndex : 0;
+            const provider = catProviders[targetIndex];
+            if (provider) window.electronAPI.search(provider.url, currentQuery, provider.type);
+        } else if (e.key === 'Escape') {
+            window.electronAPI.search('', '', ''); // Close popup
         }
     };
 
@@ -288,16 +373,25 @@ function renderPopup() {
 
             if (isImageSource(icon)) {
                 const iconImg = document.createElement('img');
-                iconImg.src = icon;
+                iconImg.src = toImageSrc(icon);
                 iconImg.style.width = '18px';
                 iconImg.style.height = '18px';
                 iconImg.style.objectFit = 'contain';
+                // IPC fallback for local paths in dev mode
+                iconImg.onerror = () => {
+                    if (/^[a-zA-Z]:[\\/]/.test(icon) && window.electronAPI?.readLocalIcon) {
+                        window.electronAPI.readLocalIcon(icon).then(dataUrl => {
+                            if (dataUrl) iconImg.src = dataUrl;
+                        });
+                    }
+                };
                 tab.appendChild(iconImg);
             } else {
                 tab.textContent = icon;
             }
 
             tab.title = cat;
+            tab.dataset.cat = cat; // Used by Tab-key handler to sync active class
             tab.onclick = (e) => {
                 e.stopPropagation();
                 if (cat === currentCategory) return;
@@ -358,7 +452,25 @@ function renderPopup() {
 function isImageSource(str) {
     if (!str) return false;
     const s = str.trim();
-    return s.startsWith('http') || s.startsWith('data:image') || s.startsWith('./') || s.startsWith('../');
+    return s.startsWith('http') ||
+        s.startsWith('data:image') ||
+        s.startsWith('./') ||
+        s.startsWith('../') ||
+        s.startsWith('file://') ||
+        /^[a-zA-Z]:[\\/]/.test(s); // Windows absolute path
+}
+
+/**
+ * Converts a local Windows file path to a valid file:// URL for use in <img> src.
+ * Passes through all other sources unchanged.
+ */
+function toImageSrc(str) {
+    if (!str) return str;
+    const s = str.trim();
+    if (/^[a-zA-Z]:[\\/]/.test(s)) {
+        return 'file:///' + s.replace(/\\/g, '/');
+    }
+    return s;
 }
 
 function getFaviconUrl(url) {

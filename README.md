@@ -1,6 +1,6 @@
-# 🚀 PopSearch v1.2.0-beta - Instant Search Assistant
+# 🚀 PopSearch v1.3.0-beta - Instant Search Assistant
 
-[![Version](https://img.shields.io/badge/version-v1.2.0--beta-blue)](https://github.com/wsnh2022/pop-search/releases)
+[![Version](https://img.shields.io/badge/version-v1.3.0--beta-blue)](https://github.com/wsnh2022/pop-search/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078d7.svg?logo=windows&logoColor=white)](https://github.com/wsnh2022/pop-search)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Electron](https://img.shields.io/badge/Electron-4B32C3?logo=electron&logoColor=white)
@@ -17,6 +17,10 @@ PopSearch triggers a customizable search popup from selected text using a global
 ### Key Features
 - **Search Anywhere**: Select text in any app → trigger popup → search across 40+ engines instantly.
 - **Smart Triggers**: Right-Click Hold or CapsLock + S — choose the trigger that fits your workflow.
+- **Keyboard Navigation**: Navigate icons with Arrow Keys, switch categories with Tab, launch with Enter.
+- **Local Launcher**: Run `.ahk`, `.py`, `.bat` scripts, open local files and apps directly from the popup.
+- **Local Icon Support**: Set provider icons from local `.ico`, `.png`, `.jpg`, `.svg`, `.webp`, `.bmp` files.
+- **Category Drag-to-Reorder**: Reorganize categories directly in Settings with drag-and-drop.
 - **Help & Support**: Integrated troubleshooting guide and one-click access to debug logs in Settings.
 - **Default Browser Support**: Search queries and links now respect your system's default browser settings.
 - **Infinite Extensibility**: Add any website using `{query}` placeholder and organize into custom groups.
@@ -55,7 +59,7 @@ PopSearch triggers a customizable search popup from selected text using a global
 - **Dependencies**: None (portable version)
 
 ### Steps
-1. Download `PopSearch-1.2.0-beta-portable.exe` from [Releases](https://github.com/wsnh2022/pop-search/releases)
+1. Download `PopSearch-1.3.0-beta-portable.exe` from [Releases](https://github.com/wsnh2022/pop-search/releases)
 2. Move to desired folder (Desktop, Documents, etc.)
 3. Run the application → appears in System Tray
 
@@ -75,7 +79,19 @@ PopSearch triggers a customizable search popup from selected text using a global
 ### Basic Workflow
 1. **Select Text**: Highlight text in any application (Browser, PDF, IDE)
 2. **Trigger Popup**: CapsLock + S or Right-Click Hold
-3. **Execute Search**: Left-click a provider icon to search in default browser
+3. **Navigate Icons**: Arrow keys to move, Tab to switch categories, Enter to launch
+4. **Execute Search**: Left-click or Enter on a provider icon to search in default browser
+
+### Popup Keyboard Shortcuts
+
+| Key | Action |
+|---|---|
+| `→` / `←` | Move right / left through icons |
+| `↑` / `↓` | Jump up / down by a full row |
+| `Tab` | Next category |
+| `Shift+Tab` | Previous category |
+| `Enter` | Launch focused icon (or first if none) |
+| `Escape` | Close popup |
 
 ---
 
@@ -85,7 +101,7 @@ PopSearch triggers a customizable search popup from selected text using a global
 Under **Providers** tab in settings, add search engines using `{query}` placeholder.
 - Example: `https://www.google.com/search?q={query}`
 
-**Custom Icons**: Search icon names at [icons8.com](https://icons8.com/), copy Base64 or URL, paste into Settings for live preview.
+**Custom Icons**: Paste an emoji, HTTP URL, Base64 data URL, or a **local file path** (`.ico`, `.png`, `.jpg`, `.svg`, `.webp`, `.bmp`) into the icon field for a live preview. Local files are automatically converted to portable Base64 on save.
 
 ![Get Icon](assets/screenshots/geticon.png)
 
@@ -171,7 +187,7 @@ npm start
 
 - **Hotkey Conflict**: If `CapsLock + S` conflicts with another app, use Right-Click instead
 - **AHK Compilation**: Ensure AutoHotkey v2 is in system PATH
-- **Icons Not Loading**: Requires internet connection for favicon fetching, or use Emojis/Base64
+- **Icons Not Loading**: Requires internet connection for remote favicon fetching. For offline use, paste a local file path (`.ico`, `.png`, etc.) directly into the icon field — it will be auto-converted to Base64.
 
 ---
 
@@ -186,6 +202,42 @@ npm start
 ## 📜 License
 
 MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## 📋 Changelog
+
+### v1.3.0-beta — 2026-02-20
+
+#### 🐛 Bug Fixes
+
+| # | Issue | Before | After |
+|---|---|---|---|
+| 1 | **Local icon (.ico/.png/etc.) not displaying** | Local file paths were only checked for `http`, `data:image`, `./`, `../` prefixes — `.ico` paths were treated as plain text (no `<img>` rendered). Even when detected, `file:///` URLs were blocked by Chromium's cross-origin policy when renderer is served from `http://localhost` (Vite dev). | A 5-file IPC chain (`constants` → `ipcHandlers` → `preload` → `ui.js` → `popup.js`) reads the file in the main process via `fs.readFileSync` and returns a portable `data:mime;base64,...` string. Works in dev + production. Icon input auto-converts to Base64 on paste. |
+| 2 | **Long command path breaks provider card layout** | The URL/path `<div>` had no text clamping. Long paths like `C:\Users\...\template.ahk` would wrap freely, pushing Edit/Remove buttons off-screen. | Added `white-space: nowrap; overflow: hidden; text-overflow: ellipsis` to the URL div and `min-width: 0` to the flex parent. Long paths now ellipsis-clip cleanly. |
+| 3 | **Quick-select category dropdown clipped/invisible** | Adding `overflow: hidden` to the `.provider-info` flex child (as part of fix #2) silently clipped the `position: absolute` category-change dropdown. | Removed `overflow: hidden` from the flex parent — only the URL `<div>` needs it. Dropdown renders freely again. |
+| 4 | **Cancel button missing in Add Provider form** | `#cancelBtn` had `display: none` hardcoded and was only shown when switching to Edit mode — no way to dismiss/reset the form in Add mode. | Removed the initial `display: none`. Cancel is now always visible. Clicking it clears and collapses the form in both Add and Edit modes. |
+
+#### ✨ New Features
+
+| # | Feature | Details |
+|---|---|---|
+| 5 | **Keyboard Navigation in Popup** | Arrow keys navigate icons (Left/Right within row, Up/Down across rows). Tab/Shift+Tab cycle categories. Enter launches focused icon (falls back to first). Escape closes popup. Mouse hover syncs with keyboard selection index. |
+| 6 | **Keyboard shortcut table in Help & Support** | Full keyboard reference visible in Settings → Help & Support. |
+| 7 | **Category Drag-to-Reorder in Settings** | Category rows in Settings → Categories are now draggable. Drop target shows accent-color outline. Order is saved immediately and reflected in the popup tab bar and provider dropdowns. |
+| 8 | **Local file icon support (all formats)** | `.ico`, `.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`, `.bmp` local paths accepted in icon fields. Auto-converted to portable Base64 data URLs on save. Icon field placeholder updated to list all supported formats. |
+
+---
+
+### v1.2.0-beta — Previous Release
+
+- Initial Settings UI (Providers, Categories, Bulk Import, Appearance, Help)
+- Drag-to-reorder for providers
+- Quick-select category pill per provider card
+- Local file/script launcher support (`file`, `cmd` provider types)
+- Bulk import from TSV (Excel copy-paste) and Markdown formats
+- System tray integration with context menu
+- Export / Import JSON config
 
 ---
 

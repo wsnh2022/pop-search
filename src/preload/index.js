@@ -3,8 +3,8 @@ import { IPC_CHANNELS } from '../shared/constants';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   showPopup: (text, x, y) => ipcRenderer.send(IPC_CHANNELS.SHOW_POPUP, { text, x, y }),
-  search: (provider, query) => ipcRenderer.send(IPC_CHANNELS.SEARCH, { provider, query }),
-  copyAndSearch: (provider, query) => ipcRenderer.send(IPC_CHANNELS.COPY_AND_SEARCH, { provider, query }),
+  search: (provider, query, type) => ipcRenderer.send(IPC_CHANNELS.SEARCH, { provider, query, type }),
+  copyAndSearch: (provider, query, type) => ipcRenderer.send(IPC_CHANNELS.COPY_AND_SEARCH, { provider, query, type }),
   onSelectedText: (callback) => ipcRenderer.on('selected-text', (event, text) => callback(text)),
   resizePopup: (width, height) => ipcRenderer.send(IPC_CHANNELS.RESIZE_POPUP, { width, height }),
   logToTerminal: (message) => ipcRenderer.send(IPC_CHANNELS.LOG, message),
@@ -15,5 +15,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveConfig: (data) => ipcRenderer.invoke(IPC_CHANNELS.SAVE_CONFIG, data),
   loadConfig: () => ipcRenderer.invoke(IPC_CHANNELS.LOAD_CONFIG),
   openExternal: (url) => ipcRenderer.send(IPC_CHANNELS.OPEN_EXTERNAL, url),
-  openLogFile: () => ipcRenderer.send(IPC_CHANNELS.OPEN_LOG_FILE)
+  openLogFile: () => ipcRenderer.send(IPC_CHANNELS.OPEN_LOG_FILE),
+  readLocalIcon: (filePath) => ipcRenderer.invoke(IPC_CHANNELS.READ_LOCAL_ICON, filePath)
 });

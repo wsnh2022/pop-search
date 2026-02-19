@@ -1,4 +1,4 @@
-// Shared Constants for PopSearch v1.2.0-beta
+// Shared Constants for PopSearch v1.3.0-beta
 
 export const IPC_CHANNELS = {
     SHOW_POPUP: 'show-popup',
@@ -13,7 +13,8 @@ export const IPC_CHANNELS = {
     SAVE_CONFIG: 'save-config',
     LOAD_CONFIG: 'load-config',
     OPEN_EXTERNAL: 'open-external',
-    OPEN_LOG_FILE: 'open-log-file'
+    OPEN_LOG_FILE: 'open-log-file',
+    READ_LOCAL_ICON: 'read-local-icon'
 };
 
 export const DEFAULT_APPEARANCE = {

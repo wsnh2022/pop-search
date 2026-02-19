@@ -197,6 +197,20 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
+    /* Keyboard navigation highlight — matches hover + accent glow so Enter target is obvious */
+    .provider-icon-wrapper.focused {
+      transform: scale(1.12) translateY(-2px);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 12px var(--accent-color);
+      outline: none;
+    }
+
+    .provider-icon-wrapper.focused::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
     .provider-icon {
       width: 100% !important;
       height: 100% !important;

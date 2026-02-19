@@ -1,6 +1,7 @@
 import { ipcMain, BrowserWindow, dialog, clipboard, Menu, app, nativeTheme, screen, shell } from 'electron';
 import fs from 'fs';
 import path from 'path';
+import { exec } from 'child_process';
 import { IPC_CHANNELS } from '../shared/constants';
 import { getMainWindow, getPopupWindow, createPopup } from './windowManager.js';
 import { updateTrayMenu } from './trayManager.js';
@@ -34,19 +35,12 @@ export function registerIpcHandlers() {
     });
 
 
-    ipcMain.on(IPC_CHANNELS.SEARCH, (event, { provider, query }) => {
-        logToFile(`[IPC] Search triggered. Query: ${query}`);
-        const searchUrl = provider.replace(/%s|{query}/g, encodeURIComponent(query));
-        openInBrowser(searchUrl);
-        closePopup();
+    ipcMain.on(IPC_CHANNELS.SEARCH, (event, { provider, query, type }) => {
+        handleAction(provider, query, type || 'url', false);
     });
 
-    ipcMain.on(IPC_CHANNELS.COPY_AND_SEARCH, (event, { provider, query }) => {
-        logToFile(`[IPC] Copy and Search triggered. Query: ${query}`);
-        clipboard.writeText(query);
-        const searchUrl = provider.replace(/%s|{query}/g, encodeURIComponent(query));
-        openInBrowser(searchUrl);
-        closePopup();
+    ipcMain.on(IPC_CHANNELS.COPY_AND_SEARCH, (event, { provider, query, type }) => {
+        handleAction(provider, query, type || 'url', true);
     });
 
     ipcMain.on(IPC_CHANNELS.LOG, (event, message) => {
@@ -167,12 +161,79 @@ export function registerIpcHandlers() {
             console.error('[Main] Failed to open log file:', err);
         }
     });
+
+    // Read a local image file and return it as a base64 data URL.
+    // This bypasses Chromium's cross-origin restriction that blocks file:// img src
+    // when the renderer is served from http://localhost (Vite dev mode).
+    ipcMain.handle(IPC_CHANNELS.READ_LOCAL_ICON, async (event, filePath) => {
+        try {
+            const ext = path.extname(filePath).toLowerCase();
+            const mimeMap = {
+                '.ico': 'image/x-icon',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.jpeg': 'image/jpeg',
+                '.gif': 'image/gif',
+                '.svg': 'image/svg+xml',
+                '.webp': 'image/webp',
+                '.bmp': 'image/bmp'
+            };
+            const mime = mimeMap[ext] || 'image/png';
+            const data = fs.readFileSync(filePath);
+            return `data:${mime};base64,${data.toString('base64')}`;
+        } catch (err) {
+            logToFile(`[Main] read-local-icon failed for "${filePath}": ${err.message}`);
+            return null;
+        }
+    });
 }
 
 function openInBrowser(url) {
     shell.openExternal(url).catch(err => {
         console.error(`[Main] Failed to open external URL: ${err}`);
     });
+}
+
+function handleAction(target, query, type, shouldCopy) {
+    if (shouldCopy) {
+        clipboard.writeText(query);
+    }
+
+    logToFile(`[IPC] ${type.toUpperCase()} action triggered. Target: ${target}`);
+
+    if (type === 'url') {
+        const searchUrl = target.replace(/%s|{query}/g, encodeURIComponent(query));
+        openInBrowser(searchUrl);
+    } else if (type === 'file') {
+        shell.openPath(target).catch(err => {
+            logToFile(`[Main] openPath failed: ${err}`);
+        });
+    } else if (type === 'cmd') {
+        let command = target;
+
+        // Smart Detection for script extensions
+        const lowerTarget = target.toLowerCase();
+        if (lowerTarget.endsWith('.py')) {
+            command = `python "${target}"`;
+        } else if (lowerTarget.endsWith('.ahk')) {
+            // Standard AHK v2 path
+            command = `"C:\\Program Files\\AutoHotkey\\v2\\AutoHotkey.exe" "${target}"`;
+        }
+
+        // Variable Injection (only if explicitly requested via {query})
+        if (command.includes('{query}')) {
+            command = command.replace(/{query}/g, query);
+        }
+
+        exec(command, (error) => {
+            if (error) {
+                logToFile(`[Main] exec error: ${error.message}`);
+                console.error(`[Main] exec error: ${error}`);
+            }
+        });
+    }
+
+    closePopup();
 }
 
 function closePopup() {
