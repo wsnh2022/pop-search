@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/icon.png" alt="PopSearch" width="96" height="96" />
+  <img src="assets/heroicon.png" alt="PopSearch" width="196" height="196" />
   <h1>PopSearch</h1>
 </div>
 
