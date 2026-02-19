@@ -17,7 +17,6 @@ PopSearch triggers a customizable search popup from selected text using a global
 
 ---
 
-## 🔍 What It Does
 
 ### 🆕 New in v1.3.0-beta
 
@@ -29,6 +28,7 @@ PopSearch triggers a customizable search popup from selected text using a global
 | 🖼️ | **Local Icon Support** | Paste a local `.ico`, `.png`, `.jpg`, `.svg`, `.webp`, or `.bmp` path into any icon field — auto-converted to portable Base64 on save. |
 
 ---
+## 🔍 What It Does
 
 ### Key Features
 - **Search Anywhere**: Select text in any app → trigger popup → search across 40+ engines instantly.
