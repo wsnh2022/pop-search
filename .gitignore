@@ -16,4 +16,6 @@ READMEv2.md
 
 gitsync.bat
 deploy-log.txt
+.gitsync.lock
+
 popup_search_project_claude_analysis/
