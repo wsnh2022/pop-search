@@ -26,7 +26,11 @@ import {
     savePreset,
     loadPreset,
     deletePreset,
-    renderPresetDropdown
+    renderPresetDropdown,
+    clearProviderSearch,
+    setGroupFilter,
+    toggleGroupFilterDropdown,
+    rebuildGroupDropdown
 } from './ui';
 import { Bridge } from './bridge';
 
@@ -60,7 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
         savePreset,
         loadPreset,
         deletePreset,
-        renderPresetDropdown
+        renderPresetDropdown,
+        clearProviderSearch,
+        setGroupFilter,
+        toggleGroupFilterDropdown,
+        rebuildGroupDropdown
     };
     window.bridge = Bridge;
 

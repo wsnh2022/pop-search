@@ -6,6 +6,7 @@ let categories = Store.getCategories();
 let editingIndex = -1;
 let editingCatName = null;
 let searchQuery = '';
+let activeGroupFilter = '';
 
 export function initUI() {
     const log = (msg) => {
@@ -121,6 +122,12 @@ export function initUI() {
             if (providerSearch) {
                 providerSearch.addEventListener('input', (e) => {
                     searchQuery = e.target.value.toLowerCase().trim();
+                    // Reset group filter when user types manually
+                    activeGroupFilter = '';
+                    const btn = document.getElementById('groupFilterBtn');
+                    const lbl = document.getElementById('groupFilterLabel');
+                    if (btn) btn.classList.remove('active');
+                    if (lbl) lbl.textContent = 'All';
                     renderProviders();
                 });
             }
@@ -221,6 +228,7 @@ function updateCategorySelects() {
     } else {
         select.value = "";
     }
+    rebuildGroupDropdown();
 }
 
 export function renderCategories() {
@@ -490,6 +498,9 @@ export function renderProviders() {
             countEl.textContent = '';
         }
     }
+    // Sync clear button visibility
+    const clearBtn = document.getElementById('providerSearchClear');
+    if (clearBtn) clearBtn.style.display = searchQuery ? 'flex' : 'none';
 }
 
 function isImageSource(str) {
@@ -673,9 +684,9 @@ export function updateGetIconLink(prefix) {
 
         const name = nameInput.value.trim();
         if (name) {
-            link.textContent = `Find one for "${name}" on Icons8`;
+            link.textContent = `Find icon → "${name}" on Icons8`;
         } else {
-            link.textContent = `Find one for this name on Icons8`;
+            link.textContent = `Find icon → this name on Icons8`;
         }
     } catch (e) {
         console.error(`Error in updateGetIconLink: ${e.message}`);
@@ -1225,6 +1236,72 @@ export async function deletePreset() {
     Store.saveThemePresets(presets);
     renderPresetDropdown();
     showToast(`Preset "${preset.name}" deleted.`, 'info');
+}
+
+// ─── Search Bar Controls ─────────────────────────────────────────────────────
+
+export function clearProviderSearch() {
+    const input = document.getElementById('providerSearch');
+    if (input) input.value = '';
+    searchQuery = '';
+    activeGroupFilter = '';
+    const btn = document.getElementById('groupFilterBtn');
+    const lbl = document.getElementById('groupFilterLabel');
+    if (btn) btn.classList.remove('active');
+    if (lbl) lbl.textContent = 'All';
+    renderProviders();
+}
+
+export function setGroupFilter(catName, event) {
+    if (event) event.stopPropagation();
+    // Toggle off if same filter clicked again
+    if (activeGroupFilter === catName) {
+        activeGroupFilter = '';
+        searchQuery = '';
+    } else {
+        activeGroupFilter = catName;
+        searchQuery = catName ? '#' + catName : '';
+    }
+    // Sync text input display
+    const input = document.getElementById('providerSearch');
+    if (input) input.value = '';
+    // Update button state
+    const btn = document.getElementById('groupFilterBtn');
+    const lbl = document.getElementById('groupFilterLabel');
+    if (btn) btn.classList.toggle('active', !!activeGroupFilter);
+    if (lbl) lbl.textContent = activeGroupFilter || 'All';
+    // Close dropdown
+    document.querySelectorAll('.category-dropdown').forEach(d => d.classList.remove('active'));
+    renderProviders();
+}
+
+export function toggleGroupFilterDropdown(event) {
+    if (event) event.stopPropagation();
+    const dropdown = document.getElementById('groupFilterDropdown');
+    if (!dropdown) return;
+    const wasActive = dropdown.classList.contains('active');
+    document.querySelectorAll('.category-dropdown').forEach(d => d.classList.remove('active'));
+    if (!wasActive) dropdown.classList.add('active');
+}
+
+export function rebuildGroupDropdown() {
+    const dropdown = document.getElementById('groupFilterDropdown');
+    if (!dropdown) return;
+    const allItem = `
+        <div class="category-item ${!activeGroupFilter ? 'current' : ''}" onclick="window.ui.setGroupFilter('', event)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            All Groups
+        </div>`;
+    const catItems = Object.keys(categories).map(cat => {
+        const icon = categories[cat] || '🔍';
+        const iconHtml = isImageSource(icon)
+            ? `<img src="${icon}" style="width:12px;height:12px;object-fit:contain;">`
+            : `<span>${icon}</span>`;
+        return `<div class="category-item ${activeGroupFilter === cat ? 'current' : ''}" onclick="window.ui.setGroupFilter('${cat}', event)">
+            ${iconHtml} ${cat}
+        </div>`;
+    }).join('');
+    dropdown.innerHTML = allItem + catItems;
 }
 
 // Global click listener to close dropdowns

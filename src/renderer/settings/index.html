@@ -161,6 +161,10 @@
       overflow-y: auto;
     }
 
+    .content-area::-webkit-scrollbar {
+      display: none;
+    }
+
     .section {
       display: none;
       padding-bottom: 50px;
@@ -309,27 +313,29 @@
     }
 
     .add-section-header {
-      height: 32px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 15px;
-      background: rgba(0, 0, 0, 0.03);
+      background: linear-gradient(90deg, rgba(99,102,241,0.12) 0%, rgba(59,130,246,0.06) 100%);
+      border-left: 3px solid #6366f1;
       cursor: pointer;
       user-select: none;
       font-size: 13px;
       font-weight: 600;
+      color: var(--text-color);
       border-bottom: 1px solid transparent;
-      transition: background 0.2s;
+      transition: background 0.2s, border-color 0.2s;
     }
 
     .add-section-header:hover {
-      background: rgba(0, 0, 0, 0.05);
+      background: linear-gradient(90deg, rgba(99,102,241,0.2) 0%, rgba(59,130,246,0.1) 100%);
     }
 
     .add-section.expanded .add-section-header {
-      border-bottom-color: var(--border-color);
-      background: rgba(0, 0, 0, 0.05);
+      border-bottom-color: rgba(99,102,241,0.25);
+      background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, rgba(59,130,246,0.08) 100%);
     }
 
     .add-section-content {
@@ -832,6 +838,114 @@
       padding-top: 14px;
       border-top: 1px solid var(--border-color);
     }
+
+    /* ── Search Row ──────────────────────────────────── */
+    .search-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .search-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-wrapper .search-icon {
+      position: absolute;
+      left: 13px;
+      pointer-events: none;
+      color: var(--subtitle-color);
+      display: flex;
+    }
+
+    .search-wrapper #providerSearch {
+      width: 100%;
+      padding: 9px 80px 9px 36px;
+      border-radius: 50px;
+    }
+
+    .search-count-inline {
+      position: absolute;
+      right: 40px;
+      font-size: 10px;
+      color: var(--subtitle-color);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: var(--subtitle-color);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      box-shadow: none;
+      transition: background 0.15s, color 0.15s;
+      transform: none;
+    }
+
+    .search-clear-btn:hover {
+      background: rgba(255,255,255,0.15);
+      color: var(--text-color);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .group-filter-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .group-filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--subtitle-color);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .group-filter-btn:hover {
+      border-color: var(--accent-color);
+      color: var(--text-color);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .group-filter-btn.active {
+      background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+      border-color: transparent;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(99,102,241,0.35);
+    }
+
+    #groupFilterDropdown {
+      right: 0;
+      left: auto;
+      min-width: 160px;
+    }
   </style>
 </head>
 
@@ -871,7 +985,13 @@
             <div class="settings-grid">
               <!-- Layout Card — left column -->
               <div class="settings-card">
-                <div class="card-title">📐 Layout & Sizing</div>
+                <div class="card-title" style="justify-content: space-between;">
+                  <span>📐 Layout &amp; Sizing</span>
+                  <span style="font-size:9px; font-weight:600; letter-spacing:0.4px; color:#4ade80; background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.2); border-radius:4px; padding:2px 7px; text-transform:none; display:flex; align-items:center; gap:4px;">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    Auto-saved
+                  </span>
+                </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                   <div class="input-field">
                     <label>Icon Size (px)</label>
@@ -947,7 +1067,13 @@
 
                 <!-- Theme & Colors Card -->
                 <div class="settings-card">
-                  <div class="card-title">🎨 Theme & Colors</div>
+                  <div class="card-title" style="justify-content: space-between;">
+                    <span>🎨 Theme &amp; Colors</span>
+                    <span style="font-size:9px; font-weight:600; letter-spacing:0.4px; color:#4ade80; background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.2); border-radius:4px; padding:2px 7px; text-transform:none; display:flex; align-items:center; gap:4px;">
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                      Auto-saved
+                    </span>
+                  </div>
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: stretch;">
                     <div class="input-field" style="margin-bottom: 0;">
                       <label>Font Color</label>
@@ -993,18 +1119,26 @@
         <section id="providers-list" class="section">
           <h2>Search Providers</h2>
           <p class="subtitle">Drag to reorder your favorite search tools.</p>
-          <div class="search-bar-container" style="margin-bottom: 8px; position: relative;">
-            <input type="text" id="providerSearch" placeholder="Search providers by name, URL, or category..."
-              style="width: 100%; padding: 10px 15px; border-radius: 50px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--input-text);">
-            <span id="searchCount"
-              style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--subtitle-color); pointer-events: none; opacity: 0.8;"></span>
+          <div class="search-row">
+            <div class="search-wrapper">
+              <span class="search-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </span>
+              <input type="text" id="providerSearch" placeholder="Search by name, URL or type #group...">
+              <span id="searchCount" class="search-count-inline"></span>
+              <button id="providerSearchClear" class="search-clear-btn" onclick="window.ui.clearProviderSearch()" title="Clear search">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1L11 11M1 11L11 1"/></svg>
+              </button>
+            </div>
+            <div class="group-filter-wrap">
+              <button id="groupFilterBtn" class="group-filter-btn" onclick="window.ui.toggleGroupFilterDropdown(event)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                <span id="groupFilterLabel">All</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div id="groupFilterDropdown" class="category-dropdown no-drag"></div>
+            </div>
           </div>
-          <p
-            style="font-size: 10px; margin-bottom: 15px; opacity: 0.7; color: var(--subtitle-color); padding-left: 15px;">
-            💡 <b>Tip:</b> Use <span style="color: var(--text-color); font-weight: bold;">#category</span> to search
-            groups, <span style="color: var(--text-color); font-weight: bold;">#nil</span> for non-grouped, or just type
-            for fuzzy provider search.
-          </p>
 
           <div id="providerAddSection" class="add-section">
             <div class="add-section-header" onclick="window.ui.toggleAddSection('providerAddSection')">
@@ -1039,11 +1173,24 @@
                 </button>
               </div>
 
-              <!-- Provider Name -->
-              <div class="pf-field">
-                <label class="pf-label">Provider Name <span class="pf-required">*</span></label>
-                <input type="text" id="providerName" placeholder="e.g. Google, Notion, VS Code"
-                  oninput="window.ui.updateGetIconLink('provider')">
+              <!-- Provider Name + Category on same row -->
+              <div style="display:flex; gap:10px;">
+                <div class="pf-field" style="flex:1; margin-bottom:12px;">
+                  <label class="pf-label">Provider Name <span class="pf-required">*</span></label>
+                  <input type="text" id="providerName" placeholder="e.g. Google, Notion, VS Code"
+                    oninput="window.ui.updateGetIconLink('provider')">
+                </div>
+                <div class="pf-field" style="flex:0 0 160px; margin-bottom:12px;">
+                  <label class="pf-label">Category</label>
+                  <select id="providerCategory">
+                    <option value="">Default (Unsorted)</option>
+                    <option value="Work">Work</option>
+                    <option value="Social">Social</option>
+                    <option value="Tools">Tools</option>
+                    <option value="Media">Media</option>
+                    <option value="Personal">Personal</option>
+                  </select>
+                </div>
               </div>
 
               <!-- Target URL — label text is swapped by onTypeChange(), asterisk is a sibling so it survives innerHTML rewrite -->
@@ -1057,22 +1204,16 @@
                   oninput="window.ui.updateIconPreview('providerIcon', 'providerIconPreview')">
               </div>
 
-              <!-- Category -->
-              <div class="pf-field">
-                <label class="pf-label">Category</label>
-                <select id="providerCategory">
-                  <option value="">Default (Unsorted)</option>
-                  <option value="Work">Work</option>
-                  <option value="Social">Social</option>
-                  <option value="Tools">Tools</option>
-                  <option value="Media">Media</option>
-                  <option value="Personal">Personal</option>
-                </select>
-              </div>
-
               <!-- Icon -->
               <div class="pf-field">
-                <label class="pf-label">Icon</label>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                  <label class="pf-label" style="margin-bottom:0;">Icon</label>
+                  <span style="font-size:10px; opacity:0.8;">
+                    <a href="#" id="providerGetIconLink" class="icon-search-link" onclick="event.preventDefault(); window.ui.searchProviderIcons8()">Find icon → this name on Icons8</a>
+                    <span style="color:var(--subtitle-color); margin:0 5px;">·</span>
+                    <a href="#" class="icon-search-link" onclick="event.preventDefault(); window.bridge.openExternal('https://www.base64-image.de/')">Convert to Base64</a>
+                  </span>
+                </div>
                 <div style="display:flex; gap:8px; align-items:center;">
                   <input type="text" id="providerIcon"
                     placeholder="Emoji, URL, Base64, or local path (.ico .png .jpg .svg .webp .bmp)"
@@ -1081,10 +1222,6 @@
                   <div id="providerIconPreview"
                     style="flex:0 0 36px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); overflow:hidden;"></div>
                 </div>
-                <p style="font-size:10px; margin-top:2px; opacity:0.8; padding-left:2px;">
-                  💡 Don't have an icon? <a href="#" id="providerGetIconLink" class="icon-search-link"
-                    onclick="event.preventDefault(); window.ui.searchProviderIcons8()">Find one for this name on Icons8</a>
-                </p>
               </div>
 
               <!-- Footer -->
@@ -1109,24 +1246,27 @@
               <span class="toggle-icon">▼</span>
             </div>
             <div class="add-section-content">
-              <div class="input-group">
-                <input type="text" id="catName" placeholder="Category Name (e.g., Work)"
+              <div class="pf-field">
+                <label class="pf-label">Category Name <span class="pf-required">*</span></label>
+                <input type="text" id="catName" placeholder="e.g. Work, Social, Tools"
                   oninput="window.ui.updateGetIconLink('cat')">
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                <label class="pf-label" style="margin-bottom:0;">Icon</label>
+                <span style="font-size:10px; opacity:0.8;">
+                  <a href="#" id="catGetIconLink" class="icon-search-link" onclick="event.preventDefault(); window.ui.searchIcons8()">Find icon → this name on Icons8</a>
+                  <span style="color:var(--subtitle-color); margin:0 5px;">·</span>
+                  <a href="#" class="icon-search-link" onclick="event.preventDefault(); window.bridge.openExternal('https://www.base64-image.de/')">Convert to Base64</a>
+                </span>
               </div>
               <div class="input-group">
                 <input type="text" id="catIcon"
-                  placeholder="Icon — Emoji, URL, Base64, or local path (.ico .png .jpg .svg .webp .bmp)"
+                  placeholder="Emoji, URL, Base64, or local path (.ico .png .jpg .svg .webp .bmp)"
                   oninput="window.ui.updateIconPreview('catIcon', 'catIconPreview')">
                 <div id="catIconPreview"
                   style="flex: 0 0 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); border-radius: 4px; background: var(--input-bg); overflow: hidden;">
                 </div>
               </div>
-              <p style="font-size: 10px; margin-top: -10px; margin-bottom: 12px; opacity: 0.8; padding-left: 2px;">
-                💡 Don't have an icon? <a href="#" id="catGetIconLink" class="icon-search-link"
-                  onclick="event.preventDefault(); window.ui.searchIcons8()">Find one for this name
-                  on
-                  Icons8</a>
-              </p>
               <div style="display: flex; gap: 10px;">
                 <button class="primary" id="saveCatBtn" onclick="window.ui.saveCategory()">Save Category</button>
                 <button id="cancelCatBtn" onclick="window.ui.cancelCatEdit()" style="display: none;"
@@ -1219,8 +1359,7 @@
                   <span style="font-size: 11px; color: var(--subtitle-color); opacity: 0.8;">Locate and open the log
                     file.</span>
                 </div>
-                <button class="secondary" id="openLogBtn" style="padding: 6px 16px; font-size: 11px;">Open Log
-                  File</button>
+                <button class="secondary" id="openLogBtn" style="padding: 6px 16px; font-size: 11px;" onclick="window.electronAPI && window.electronAPI.openLogFile && window.electronAPI.openLogFile()">Open Log File</button>
               </div>
             </div>
             <p class="subtitle" style="margin-top: 24px; text-align: center; opacity: 0.6; font-size: 11px;">PopSearch
