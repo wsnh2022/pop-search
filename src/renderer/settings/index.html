@@ -157,7 +157,7 @@
 
     .content-area {
       flex: 1;
-      padding: 30px;
+      padding: 20px 30px 30px 30px;
       overflow-y: auto;
     }
 
@@ -787,13 +787,15 @@
               <!-- Layout Card -->
               <div class="settings-card">
                 <div class="card-title">📐 Layout & Sizing</div>
-                <div class="input-field">
-                  <label>Icon Size (px)</label>
-                  <input type="number" id="iconSize" value="28" min="16" max="128">
-                </div>
-                <div class="input-field">
-                  <label>Icons Per Row</label>
-                  <input type="number" id="iconsPerRow" value="8" min="1" max="50">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div class="input-field">
+                    <label>Icon Size (px)</label>
+                    <input type="number" id="iconSize" value="28" min="16" max="128">
+                  </div>
+                  <div class="input-field">
+                    <label>Icons Per Row</label>
+                    <input type="number" id="iconsPerRow" value="8" min="1" max="50">
+                  </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                   <div class="input-field">
@@ -805,13 +807,38 @@
                     <input type="number" id="gridGapY" value="9" min="0" max="100">
                   </div>
                 </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div class="input-field">
+                    <label>Font Weight</label>
+                    <select id="fontWeight">
+                      <option value="400">Normal</option>
+                      <option value="500">Medium</option>
+                      <option value="600">Semibold</option>
+                      <option value="700">Bold</option>
+                    </select>
+                  </div>
+                  <div class="input-field">
+                    <label>Search Font Size</label>
+                    <select id="fontSize">
+                      <option value="12">12px</option>
+                      <option value="13">13px</option>
+                      <option value="14">14px</option>
+                      <option value="15">15px</option>
+                      <option value="16">16px</option>
+                      <option value="18">18px</option>
+                      <option value="20">20px</option>
+                    </select>
+                  </div>
+                </div>
                 <div class="input-field">
-                  <label>Font Weight</label>
-                  <select id="fontWeight">
-                    <option value="400">Normal</option>
-                    <option value="500">Medium</option>
-                    <option value="600">Semibold</option>
-                    <option value="700">Bold</option>
+                  <label>Label Font Size</label>
+                  <select id="labelFontSize">
+                    <option value="9">9px</option>
+                    <option value="10">10px</option>
+                    <option value="11">11px</option>
+                    <option value="12">12px</option>
+                    <option value="13">13px</option>
+                    <option value="14">14px</option>
                   </select>
                 </div>
               </div>

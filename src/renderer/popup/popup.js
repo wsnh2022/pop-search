@@ -68,6 +68,8 @@ function getFilteredData() {
 function applyTheme() {
     const s = {
         fontWeight: localStorage.getItem('fontWeight') || '500',
+        fontSize: parseInt(localStorage.getItem('fontSize') || DEFAULT_APPEARANCE.fontSize),
+        labelFontSize: parseInt(localStorage.getItem('labelFontSize') || DEFAULT_APPEARANCE.labelFontSize),
         fontColor: localStorage.getItem('fontColor'),
         bgColor: localStorage.getItem('bgColor'),
         accentColor: localStorage.getItem('accentColor'),
@@ -80,6 +82,8 @@ function applyTheme() {
 
     const root = document.documentElement;
     root.style.setProperty('--popup-font-weight', s.fontWeight);
+    root.style.setProperty('--popup-font-size', `${s.fontSize}px`);       // Search input font size
+    root.style.setProperty('--label-font-size', `${s.labelFontSize}px`);  // Label font size (group name + icon label)
 
     if (s.fontColor) {
         root.style.setProperty('--label-color', s.fontColor);

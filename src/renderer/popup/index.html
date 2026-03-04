@@ -81,7 +81,7 @@
       padding: 10px 16px;
       color: #ffffff;
       font-family: inherit;
-      font-size: 16px;
+      font-size: var(--popup-font-size, 14px);
       font-weight: var(--popup-font-weight, 500);
       outline: none;
       transition: all 0.2s ease;
@@ -113,7 +113,7 @@
 
     .label-cat {
       font-family: 'Segoe UI', Arial, sans-serif;
-      font-size: 10px;
+      font-size: var(--label-font-size, 10px);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -123,7 +123,7 @@
     }
 
     .label-sep {
-      font-size: 11px;
+      font-size: var(--label-font-size, 10px);
       font-weight: 500;              /* Heavier so → renders crisply */
       color: rgba(255, 255, 255, 0.5);
       margin: 0 5px;
@@ -134,7 +134,7 @@
 
     .label-icon {
       font-family: 'Segoe UI', Arial, sans-serif;
-      font-size: 11px;
+      font-size: var(--label-font-size, 10px);
       font-weight: var(--popup-font-weight, 600);
       letter-spacing: 0.2px;
       color: rgba(255, 255, 255, 0.92);

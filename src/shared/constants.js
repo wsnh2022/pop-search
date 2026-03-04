@@ -25,6 +25,8 @@ export const DEFAULT_APPEARANCE = {
     popupMaxWidth: '0',
     theme: 'dark',
     fontWeight: '500',
+    fontSize: '14',
+    labelFontSize: '10',
     fontColor: '#00f2ff',
     bgColor: '#13132a',
     accentColor: '#5900ff',

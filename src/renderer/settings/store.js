@@ -26,6 +26,8 @@ export const Store = {
             popupMaxWidth: localStorage.getItem('popupMaxWidth') || DEFAULT_APPEARANCE.popupMaxWidth,
             theme: DEFAULT_APPEARANCE.theme,
             fontWeight: localStorage.getItem('fontWeight') || DEFAULT_APPEARANCE.fontWeight,
+            fontSize: localStorage.getItem('fontSize') || DEFAULT_APPEARANCE.fontSize,
+            labelFontSize: localStorage.getItem('labelFontSize') || DEFAULT_APPEARANCE.labelFontSize,
             fontColor: localStorage.getItem('fontColor') || DEFAULT_APPEARANCE.fontColor,
             bgColor: localStorage.getItem('bgColor') || DEFAULT_APPEARANCE.bgColor,
             accentColor: localStorage.getItem('accentColor') || DEFAULT_APPEARANCE.accentColor,
@@ -36,7 +38,7 @@ export const Store = {
         };
     },
 
-    saveAppearance({ iconSize, iconsPerRow, gridGapX, gridGapY, popupMaxWidth, theme, fontWeight, fontColor, bgColor, accentColor, tabActiveBg, customCSS, showDummyBtn, showUnsorted }) {
+    saveAppearance({ iconSize, iconsPerRow, gridGapX, gridGapY, popupMaxWidth, theme, fontWeight, fontSize, labelFontSize, fontColor, bgColor, accentColor, tabActiveBg, customCSS, showDummyBtn, showUnsorted }) {
         localStorage.setItem('iconSize', iconSize);
         localStorage.setItem('iconsPerRow', iconsPerRow);
         if (gridGapX !== undefined) localStorage.setItem('gridGapX', gridGapX);
@@ -44,6 +46,8 @@ export const Store = {
         localStorage.setItem('popupMaxWidth', popupMaxWidth || '0');
         localStorage.setItem('theme', theme);
         if (fontWeight !== undefined) localStorage.setItem('fontWeight', fontWeight);
+        if (fontSize !== undefined) localStorage.setItem('fontSize', fontSize);
+        if (labelFontSize !== undefined) localStorage.setItem('labelFontSize', labelFontSize);
         if (fontColor !== undefined) localStorage.setItem('fontColor', fontColor);
         if (bgColor !== undefined) localStorage.setItem('bgColor', bgColor);
         if (accentColor !== undefined) localStorage.setItem('accentColor', accentColor);

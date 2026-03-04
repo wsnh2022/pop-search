@@ -41,6 +41,8 @@ export function initUI() {
             mapSetting('gridGapX', settings.gridGapX || DEFAULT_APPEARANCE.gridGapX);
             mapSetting('gridGapY', settings.gridGapY || DEFAULT_APPEARANCE.gridGapY);
             mapSetting('fontWeight', settings.fontWeight || DEFAULT_APPEARANCE.fontWeight);
+            mapSetting('fontSize', settings.fontSize || DEFAULT_APPEARANCE.fontSize);
+            mapSetting('labelFontSize', settings.labelFontSize || DEFAULT_APPEARANCE.labelFontSize);
             mapSetting('fontColor', settings.fontColor || DEFAULT_APPEARANCE.fontColor);
             mapSetting('bgColor', settings.bgColor || DEFAULT_APPEARANCE.bgColor);
             mapSetting('accentColor', settings.accentColor || DEFAULT_APPEARANCE.accentColor);
@@ -70,7 +72,7 @@ export function initUI() {
                 }
             });
 
-            ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontWeight'].forEach(id => {
+            ['iconSize', 'iconsPerRow', 'gridGapX', 'gridGapY', 'fontWeight', 'fontSize', 'labelFontSize'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('change', saveSilently);
             });
@@ -827,6 +829,8 @@ export function saveAppearance(silent = false) {
     const popupMaxWidth = '0';
 
     const fontWeight = document.getElementById('fontWeight')?.value || DEFAULT_APPEARANCE.fontWeight;
+    const fontSize = document.getElementById('fontSize')?.value || DEFAULT_APPEARANCE.fontSize;
+    const labelFontSize = document.getElementById('labelFontSize')?.value || DEFAULT_APPEARANCE.labelFontSize;
     const fontColor = document.getElementById('fontColor')?.value || DEFAULT_APPEARANCE.fontColor;
     const bgColor = document.getElementById('bgColor')?.value || DEFAULT_APPEARANCE.bgColor;
     const accentColor = document.getElementById('accentColor')?.value || DEFAULT_APPEARANCE.accentColor;
@@ -842,6 +846,8 @@ export function saveAppearance(silent = false) {
         gridGapY,
         theme: 'dark',
         fontWeight,
+        fontSize,
+        labelFontSize,
         fontColor,
         bgColor,
         accentColor,
