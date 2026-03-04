@@ -27,8 +27,7 @@
 
     #main-wrapper {
       display: inline-block;
-      padding: 24px;
-      /* Increased to avoid shadow clipping */
+      padding: 8px;
     }
 
     :root {
@@ -41,7 +40,7 @@
       --tab-active-bg: rgba(255, 255, 255, 0.12);
       --tab-indicator: #00f2ff;
       /* Dynamic shadow based on accent color */
-      --shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 255, 0.2);
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 242, 255, 0.2);
     }
 
     .popup {
@@ -55,8 +54,7 @@
       flex-direction: column;
       row-gap: 0;
       width: max-content;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      /* More subtle border */
+      border: none;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden;
     }

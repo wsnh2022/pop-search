@@ -96,8 +96,8 @@ function applyTheme() {
     if (s.accentColor) {
         root.style.setProperty('--tab-indicator', s.accentColor);
         root.style.setProperty('--accent-color', s.accentColor);
-        const glowColor = s.accentColor.startsWith('#') ? `${s.accentColor}33` : 'rgba(255, 255, 255, 0.1)';
-        root.style.setProperty('--shadow', `0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px ${glowColor}`);
+          const glowColor = s.accentColor.startsWith('#') ? `${s.accentColor}33` : 'rgba(255, 255, 255, 0.1)';
+        root.style.setProperty('--shadow', `0 4px 12px rgba(0, 0, 0, 0.6), 0 0 8px ${glowColor}`);
     }
 
     if (s.tabActiveBg) root.style.setProperty('--tab-active-bg', s.tabActiveBg);
