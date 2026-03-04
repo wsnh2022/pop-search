@@ -120,7 +120,6 @@ PopSearch triggers a customizable search popup from selected text using a global
 | Key | Action |
 |---|---|
 | `Alt+→` / `Alt+←` | Move right / left through icons |
-| `↑` / `↓` | Jump up / down by a full row |
 | `Tab` | Next category |
 | `Shift+Tab` | Previous category |
 | `Enter` | Launch focused icon (or first in category if none focused) |
@@ -157,9 +156,10 @@ Example: `https://www.google.com/search?q={query}`
 
 **Custom Icons**: Paste an emoji, HTTP URL, Base64 data URL, or a local file path (`.ico`, `.png`, `.jpg`, `.svg`, `.webp`, `.bmp`) into the icon field for a live preview. Local files are automatically converted to portable Base64 on save.
 
-![Get Icon](assets/screenshots/geticon.png)
+![Get Icon](assets/screenshots/Appearance.png)
 
 ![Search Providers](assets/screenshots/search_provider.png)
+![Search Providers](assets/screenshots/categories.png)
 
 ### Provider Search & Group Filter
 
@@ -338,7 +338,7 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 | # | Feature | Details |
 |---|---|---|
-| 1 | **Keyboard Navigation** | `Alt+Left/Right` moves between icons within a row, `Up/Down` jumps across rows. Tab/Shift+Tab cycle categories. Enter launches (falls back to first icon). Escape closes. Mouse hover syncs with keyboard selection. |
+| 1 | **Keyboard Navigation** | `Alt+Left/Right` moves between icons. Tab/Shift+Tab cycle categories. Enter launches (falls back to first icon). Escape closes. Mouse hover syncs with keyboard selection. |
 | 2 | **Theme Presets** | Save/load/delete named full color presets (font color, bg, accent, tab active bg) from the Appearance tab. |
 | 3 | **Multi-URL Launch** | `;;` separator in URL field opens multiple URLs or paths from a single provider action. |
 | 4 | **Scroll Wheel Category Switching** | Scrolling the mouse wheel over the popup cycles categories with a 40ms debounce. Supports both vertical and horizontal wheel axes. |
