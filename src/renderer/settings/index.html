@@ -747,6 +747,83 @@
       justify-content: flex-end;
       gap: 12px;
     }
+
+    /* ── Provider Form Redesign ───────────────────────── */
+    .provider-type-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      background: rgba(0,0,0,0.2);
+      padding: 4px;
+      border-radius: 10px;
+    }
+
+    .type-tab {
+      flex: 1;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--subtitle-color);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: none;
+      transform: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .type-tab:hover {
+      background: rgba(255,255,255,0.07);
+      color: var(--text-color);
+      transform: none;
+    }
+
+    .type-tab.active {
+      background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(99,102,241,0.35);
+    }
+
+    .pf-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .pf-field:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .pf-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--subtitle-color);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pf-required {
+      color: #f43f5e;
+      font-size: 11px;
+    }
+
+    .pf-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+    }
   </style>
 </head>
 
@@ -773,7 +850,7 @@
         <div id="nav-categories" class="sidebar-item" onclick="window.ui.showSection('categories-list', this)">
           Categories</div>
         <div id="nav-bulk" class="sidebar-item" onclick="window.ui.showSection('bulk-import', this)">
-          Bulk Import</div>
+          Bulk Import <span style="font-size:9px; font-weight:700; letter-spacing:0.5px; color:#f59e0b; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); border-radius:4px; padding:1px 5px; margin-left:4px; vertical-align:middle;">BETA</span></div>
         <div id="nav-advanced" class="sidebar-item" onclick="window.ui.showSection('shortcuts', this)">Help & Support
         </div>
       </aside>
@@ -927,49 +1004,87 @@
               <span class="toggle-icon">▼</span>
             </div>
             <div class="add-section-content">
-              <div class="input-group" style="flex-direction: column; gap: 8px;">
-                <input type="text" id="providerName" placeholder="Provider Name" style="width: 100%;"
-                  oninput="window.ui.updateGetIconLink('provider')">
-                <div style="display: flex; gap: 10px;">
-                  <select id="providerType" style="flex: 1;" onchange="window.ui.onTypeChange()">
-                    <option value="url">Web URL</option>
-                    <option value="file">File / Folder / .exe</option>
-                    <option value="cmd">Command/Script</option>
-                  </select>
-                  <select id="providerCategory" style="flex: 1;">
-                    <option value="">Default (Unsorted)</option>
-                    <option value="Work">Work</option>
-                    <option value="Social">Social</option>
-                    <option value="Tools">Tools</option>
-                    <option value="Media">Media</option>
-                    <option value="Personal">Personal</option>
-                  </select>
-                </div>
+
+              <!-- Hidden select — all JS reads/writes this directly, do not remove -->
+              <select id="providerType" style="display:none;" onchange="window.ui.onTypeChange()">
+                <option value="url">Web URL</option>
+                <option value="file">File / Folder / .exe</option>
+                <option value="cmd">Command/Script</option>
+              </select>
+
+              <!-- Visual type tab switcher -->
+              <div class="provider-type-tabs">
+                <button type="button" class="type-tab active"
+                  onclick="document.getElementById('providerType').value='url'; document.querySelectorAll('.type-tab').forEach(t=>t.classList.remove('active')); this.classList.add('active'); window.ui.onTypeChange();">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  Web URL
+                </button>
+                <button type="button" class="type-tab"
+                  onclick="document.getElementById('providerType').value='file'; document.querySelectorAll('.type-tab').forEach(t=>t.classList.remove('active')); this.classList.add('active'); window.ui.onTypeChange();">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  File / App
+                </button>
+                <button type="button" class="type-tab"
+                  onclick="document.getElementById('providerType').value='cmd'; document.querySelectorAll('.type-tab').forEach(t=>t.classList.remove('active')); this.classList.add('active'); window.ui.onTypeChange();">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                  Command
+                </button>
               </div>
-              <div class="input-group" style="flex-direction: column; gap: 4px;">
-                <label id="providerUrlLabel" style="font-size: 12px; font-weight: 600; color: var(--text-color);">Target
-                  URL</label>
-                <input type="text" id="providerUrl" placeholder="URL with {query}" style="flex: 1;"
+
+              <!-- Provider Name -->
+              <div class="pf-field">
+                <label class="pf-label">Provider Name <span class="pf-required">*</span></label>
+                <input type="text" id="providerName" placeholder="e.g. Google, Notion, VS Code"
+                  oninput="window.ui.updateGetIconLink('provider')">
+              </div>
+
+              <!-- Target URL — label text is swapped by onTypeChange(), asterisk is a sibling so it survives innerHTML rewrite -->
+              <div class="pf-field">
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <label class="pf-label" id="providerUrlLabel">Target URL</label>
+                  <span class="pf-required" style="font-size:11px; line-height:1;">*</span>
+                </div>
+                <input type="text" id="providerUrl"
+                  placeholder="https://example.com/search?q={query}"
                   oninput="window.ui.updateIconPreview('providerIcon', 'providerIconPreview')">
               </div>
-              <div class="input-group">
-                <input type="text" id="providerIcon"
-                  placeholder="Icon — Emoji, URL, Base64, or local path (.ico .png .jpg .svg .webp .bmp)"
-                  style="flex: 1;" oninput="window.ui.updateIconPreview('providerIcon', 'providerIconPreview')">
-                <div id="providerIconPreview"
-                  style="flex: 0 0 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); border-radius: 4px; background: var(--input-bg); overflow: hidden;">
+
+              <!-- Category -->
+              <div class="pf-field">
+                <label class="pf-label">Category</label>
+                <select id="providerCategory">
+                  <option value="">Default (Unsorted)</option>
+                  <option value="Work">Work</option>
+                  <option value="Social">Social</option>
+                  <option value="Tools">Tools</option>
+                  <option value="Media">Media</option>
+                  <option value="Personal">Personal</option>
+                </select>
+              </div>
+
+              <!-- Icon -->
+              <div class="pf-field">
+                <label class="pf-label">Icon</label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="text" id="providerIcon"
+                    placeholder="Emoji, URL, Base64, or local path (.ico .png .jpg .svg .webp .bmp)"
+                    style="flex:1;"
+                    oninput="window.ui.updateIconPreview('providerIcon', 'providerIconPreview')">
+                  <div id="providerIconPreview"
+                    style="flex:0 0 36px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); overflow:hidden;"></div>
                 </div>
+                <p style="font-size:10px; margin-top:2px; opacity:0.8; padding-left:2px;">
+                  💡 Don't have an icon? <a href="#" id="providerGetIconLink" class="icon-search-link"
+                    onclick="event.preventDefault(); window.ui.searchProviderIcons8()">Find one for this name on Icons8</a>
+                </p>
               </div>
-              <p style="font-size: 10px; margin-top: -10px; margin-bottom: 12px; opacity: 0.8; padding-left: 2px;">
-                💡 Don't have an icon? <a href="#" id="providerGetIconLink" class="icon-search-link"
-                  onclick="event.preventDefault(); window.ui.searchProviderIcons8()">Find one for this name
-                  on
-                  Icons8</a>
-              </p>
-              <div style="display: flex; gap: 10px;">
-                <button class="primary" id="submitBtn" onclick="window.ui.addProvider()">Add</button>
+
+              <!-- Footer -->
+              <div class="pf-footer">
                 <button id="cancelBtn" onclick="window.ui.cancelEdit()" class="secondary">Cancel</button>
+                <button class="primary" id="submitBtn" onclick="window.ui.addProvider()">Add Provider</button>
               </div>
+
             </div>
           </div>
 

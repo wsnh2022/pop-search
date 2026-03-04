@@ -688,7 +688,13 @@ export function editProvider(index) {
     const p = providers[index];
     document.getElementById('providerName').value = p.name;
     document.getElementById('providerUrl').value = p.url;
-    document.getElementById('providerType').value = p.type || 'url';
+    const editType = p.type || 'url';
+    document.getElementById('providerType').value = editType;
+    // Sync visual tab switcher to match the loaded type
+    document.querySelectorAll('.type-tab').forEach((tab, i) => {
+        const tabTypes = ['url', 'file', 'cmd'];
+        tab.classList.toggle('active', tabTypes[i] === editType);
+    });
     document.getElementById('providerIcon').value = p.icon || '';
 
     // Normalize category value for select (data uses "" or "Unsorted" occasionally, UI wants "")
@@ -745,6 +751,10 @@ export function cancelEdit() {
     document.getElementById('providerName').value = '';
     document.getElementById('providerUrl').value = '';
     document.getElementById('providerType').value = 'url';
+    // Reset visual tab switcher back to Web URL
+    document.querySelectorAll('.type-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === 0);
+    });
     document.getElementById('providerIcon').value = '';
     document.getElementById('providerCategory').value = ''; // Reset to Default
     onTypeChange();
