@@ -23,7 +23,7 @@ export function startAhk() {
 
         if (isDev) {
             // Development: Run the compiled .exe from the assets folder
-            ahkPath = path.join(process.cwd(), 'assets', 'pop_search_trigger.exe');
+            ahkPath = path.join(process.cwd(), 'assets', 'nexus_trigger.exe');
 
             if (!fs.existsSync(ahkPath)) {
                 console.error('[AHK Manager] Compiled EXE not found in assets:', ahkPath);
@@ -37,7 +37,7 @@ export function startAhk() {
             });
         } else {
             // Production: Run the compiled .exe from resources/assets
-            ahkPath = path.join(process.resourcesPath, 'assets', 'pop_search_trigger.exe');
+            ahkPath = path.join(process.resourcesPath, 'assets', 'nexus_trigger.exe');
             logToFile(`[AHK Manager] Resolving AHK path: ${ahkPath}`);
 
             if (!fs.existsSync(ahkPath)) {

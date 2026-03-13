@@ -57,7 +57,7 @@ export function createTray() {
 
     updateTrayMenu();
 
-    tray.setToolTip('Pop Search');
+    tray.setToolTip('Nexus Launcher');
 
     tray.on('double-click', () => {
         const mainWindow = getMainWindow();

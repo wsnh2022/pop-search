@@ -57,7 +57,7 @@ TriggerPopup() {
         whr.Send()
     } catch {
         ; Fallback to running the app if not responding
-        exePath := A_ScriptDir . "\PopSearch.exe"
+        exePath := A_ScriptDir . "\Nexus Launcher.exe"
         if FileExist(exePath) {
             Run('"' . exePath . '" --search="' . StrReplace(selectedText, '"', "'") . '"', A_ScriptDir, "Hide")
         }
@@ -73,7 +73,7 @@ TriggerPopup() {
 COMPILATION TIPS:
 1. Compile Electron: Use `npm run build` after setting up electron-builder.
 2. Compile AHK: Right-click this script and select "Compile Script"
-   to create a standalone "pop_search_trigger.exe".
+   to create a standalone "nexus_trigger.exe".
 */
 
 ; Helper function for URL encoding

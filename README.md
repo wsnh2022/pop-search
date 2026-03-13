@@ -1,17 +1,17 @@
 <div align="center">
-  <img src="assets/heroicon.png" alt="PopSearch" width="230" height="230" />
-  <h1>PopSearch</h1>
+  <img src="assets/heroicon.png" alt="Nexus Launcher" width="230" height="230" />
+  <h1>Nexus Launcher</h1>
 </div>
 
-# PopSearch v1.3.1-beta — Context-Triggered Action Launcher
+# Nexus Launcher v1.3.1-beta - Context-Triggered Action Launcher
 
-[![Version](https://img.shields.io/badge/version-v1.3.1--beta-blue)](https://github.com/wsnh2022/pop-search/releases)
-[![Platform](https://img.shields.io/badge/platform-Windows-0078d7.svg?logo=windows&logoColor=white)](https://github.com/wsnh2022/pop-search)
+[![Version](https://img.shields.io/badge/version-v1.3.1--beta-blue)](https://github.com/wsnh2022/nexus-launcher/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078d7.svg?logo=windows&logoColor=white)](https://github.com/wsnh2022/nexus-launcher)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Electron](https://img.shields.io/badge/Electron-4B32C3?logo=electron&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 
-PopSearch is a context-triggered action launcher for Windows. Select text in any application, trigger with Right-Click Hold or CapsLock + S, and instantly dispatch it to any URL-based search engine, AI tool, internal system, local file, or script — organized into unlimited custom categories with no caps on providers or groups.
+Nexus Launcher is a context-triggered action launcher for Windows. Select text in any application, trigger with Right-Click Hold or CapsLock + S, and instantly dispatch it to any URL-based search engine, AI tool, internal system, local file, or script - organized into unlimited custom categories with no caps on providers or groups.
 
 > **Windows 10+ only.** macOS/Linux not supported.
 
@@ -24,7 +24,7 @@ PopSearch is a context-triggered action launcher for Windows. Select text in any
 | ⌨️ | **Keyboard Navigation** | Arrow keys move between icons, `Tab` switches categories, `Enter` launches, `Escape` closes. Mouse hover stays in sync. |
 | 🖥️ | **Script & File Launcher** | Run `.ahk`, `.py`, `.bat` scripts or open any local file/app directly from the popup using the `File` and `Command` provider types. Smart detection auto-wraps Python and AHK runtimes. |
 | 🗂️ | **Category Drag-to-Reorder** | Drag category rows in Settings to rearrange their order. Reflected instantly in the popup tab bar and all dropdowns. |
-| 🖼️ | **Local Icon Support** | Paste a local `.ico`, `.png`, `.jpg`, `.svg`, `.webp`, or `.bmp` path into any icon field — auto-converted to portable Base64 on save. |
+| 🖼️ | **Local Icon Support** | Paste a local `.ico`, `.png`, `.jpg`, `.svg`, `.webp`, or `.bmp` path into any icon field - auto-converted to portable Base64 on save. |
 | 🎨 | **Theme Presets** | Save, load, and delete named color theme presets. Instantly swap full color configurations without manual re-entry. |
 | 🔗 | **Multi-URL Launch** | Separate URLs with `;;` in a provider's URL field to open multiple tabs simultaneously from a single click or keypress. |
 | 🔃 | **Scroll Wheel Category Switching** | Scroll the mouse wheel over the popup to cycle through categories without touching the keyboard. |
@@ -34,23 +34,23 @@ PopSearch is a context-triggered action launcher for Windows. Select text in any
 
 ## What It Does
 
-PopSearch sits in the system tray and activates on a global hotkey. The selected text (or typed query) is injected into any provider you configure — a search engine, an AI chat interface, a company intranet, a local script, or a file path. Providers are grouped into categories. Both are unlimited. The popup reflects exactly what you build.
+Nexus Launcher sits in the system tray and activates on a global hotkey. The selected text (or typed query) is injected into any provider you configure - a search engine, an AI chat interface, a company intranet, a local script, or a file path. Providers are grouped into categories. Both are unlimited. The popup reflects exactly what you build.
 
 ### Key Features
 
-- **Unlimited Providers**: Add any URL using the `{query}` placeholder, any local file path, or any command/script. There is no cap — the library grows as large as you need it.
-- **Smart Triggers**: Right-Click Hold (300ms) or CapsLock + S — choose the trigger that fits your workflow.
+- **Unlimited Providers**: Add any URL using the `{query}` placeholder, any local file path, or any command/script. There is no cap - the library grows as large as you need it.
+- **Smart Triggers**: Right-Click Hold (300ms) or CapsLock + S - choose the trigger that fits your workflow.
 - **Keyboard Navigation**: Navigate icons with Arrow Keys, switch categories with Tab, launch with Enter.
 - **Scroll Wheel Navigation**: Scroll the popup to cycle categories without lifting your hands from the keyboard.
-- **Multi-URL Launch**: Open multiple sites from one provider using `;;` URL separator — single click, multiple tabs.
+- **Multi-URL Launch**: Open multiple sites from one provider using `;;` URL separator - single click, multiple tabs.
 - **Local Launcher**: Run `.ahk`, `.py`, `.bat` scripts, open local files and apps directly from the popup.
 - **Theme Presets**: Save and load named full color themes. No re-entering hex values.
-- **Local Icon Support**: Set provider icons from local `.ico`, `.png`, `.jpg`, `.svg`, `.webp`, `.bmp` files — auto Base64 converted.
+- **Local Icon Support**: Set provider icons from local `.ico`, `.png`, `.jpg`, `.svg`, `.webp`, `.bmp` files - auto Base64 converted.
 - **Category Drag-to-Reorder**: Reorganize categories in Settings with drag-and-drop. Syncs instantly to popup.
 - **Provider Search & Group Filter**: Live-search and category-filter providers inside Settings.
 - **Show/Hide Unsorted Toggle**: Control whether providers without a category appear in the popup.
 - **Default Browser Support**: All URLs open in your system's default browser.
-- **Unlimited Categories**: Create as many groups as your workflow requires — by domain, project, client, tool type, or any other scheme. No structural limits.
+- **Unlimited Categories**: Create as many groups as your workflow requires - by domain, project, client, tool type, or any other scheme. No structural limits.
 - **Bulk Import with Dedup**: Import providers from TSV/Markdown. Automatically skips existing name+URL duplicates.
 - **Export / Import Config**: Back up and restore the full configuration as a portable JSON file.
 - **Professional Logging**: Managed log rotation (5MB limit). One-click access to the log file from Settings.
@@ -91,7 +91,7 @@ PopSearch sits in the system tray and activates on a global hotkey. The selected
 
 ### Steps
 
-1. Download `PopSearch-1.3.1-beta-portable.exe` from [Releases](https://github.com/wsnh2022/pop-search/releases)
+1. Download `NexusLauncher-1.3.1-beta-portable.exe` from [Releases](https://github.com/wsnh2022/nexus-launcher/releases)
 2. Move to desired folder (Desktop, Documents, etc.)
 3. Run the application → appears in System Tray
 
@@ -152,7 +152,7 @@ Both URLs open in separate tabs on a single trigger. Works for `url` and `file` 
 
 ### Adding Providers
 
-Under the **Providers** tab in Settings, add any target using the `{query}` placeholder for URL-based providers. This works for any website, internal tool, SaaS platform, or custom domain — there is no supported list. If the site has a search URL, it works.
+Under the **Providers** tab in Settings, add any target using the `{query}` placeholder for URL-based providers. This works for any website, internal tool, SaaS platform, or custom domain - there is no supported list. If the site has a search URL, it works.
 
 Example: `https://www.google.com/search?q={query}`
 
@@ -171,12 +171,12 @@ Use the **Group** dropdown to filter by category, or type `#CategoryName` direct
 
 ### Bulk Import
 
-Organize providers in a spreadsheet with columns: Category, Name, URL (with/without `{query}`), optional icon path. Paste or type the data into the **Bulk Import** pad in Settings. Existing providers with matching name+URL are automatically skipped. This is the primary method for building large provider libraries — hundreds of entries across dozens of categories can be imported in a single paste.
+Organize providers in a spreadsheet with columns: Category, Name, URL (with/without `{query}`), optional icon path. Paste or type the data into the **Bulk Import** pad in Settings. Existing providers with matching name+URL are automatically skipped. This is the primary method for building large provider libraries - hundreds of entries across dozens of categories can be imported in a single paste.
 
 ![Bulk Import](assets/screenshots/Bulk_Import.png)
 
 <details>
-<summary>Sample Provider URLs (illustrative — not a supported list)</summary>
+<summary>Sample Provider URLs (illustrative - not a supported list)</summary>
 
 Any site with a search URL works. The following are a small sample to illustrate the pattern.
 
@@ -217,19 +217,19 @@ The **Unsorted** toggle in Settings → Help & Support controls whether provider
 
 Settings → Help & Support contains:
 
-- **Quick Start & Pro Tips** — step-by-step usage reference:
+- **Quick Start & Pro Tips** - step-by-step usage reference:
   - Select Text: Highlight text in any app (Notepad, Word, Browser)
   - Trigger: Press Right Click or CapsLock + S to open popup
   - Search: Left-click any icon
   - Manage: Right-click bar for menu
   - History: Original clipboard is restored
-- **Keyboard shortcuts table** — all popup and tray hotkeys in one place
-- **Show Unsorted toggle** — enable/disable Unsorted providers directly from this panel
-- **Open Log File** — one-click button to locate the `debug_log.txt` file on disk
+- **Keyboard shortcuts table** - all popup and tray hotkeys in one place
+- **Show Unsorted toggle** - enable/disable Unsorted providers directly from this panel
+- **Open Log File** - one-click button to locate the `debug_log.txt` file on disk
 
 ### Export / Import Config
 
-Use **Export** / **Import** buttons in the Settings footer to save or restore the full configuration (providers, categories, appearance) as a portable `pop_search_config.json` file.
+Use **Export** / **Import** buttons in the Settings footer to save or restore the full configuration (providers, categories, appearance) as a portable `nexus_launcher_config.json` file.
 
 ### Application Control
 
@@ -248,12 +248,12 @@ Right-click the tray icon or the popup search bar to access Reload / Settings / 
 ### Build from Source
 
 ```bash
-git clone https://github.com/wsnh2022/pop-search.git
-cd pop-search
+git clone https://github.com/wsnh2022/nexus-launcher.git
+cd nexus-launcher
 npm install
 
 # Build AutoHotkey trigger (.ahk → .exe)
-# Output: assets/pop_search_trigger.exe
+# Output: assets/nexus_trigger.exe
 npm run build:ahk
 
 # Build Electron application (output: dist/)
@@ -264,35 +264,35 @@ npm start
 ```
 
 **Build outputs:**
-- `assets/pop_search_trigger.exe` — Compiled AutoHotkey trigger
-- `dist/` — Final Electron application (NSIS installer + portable)
+- `assets/nexus_trigger.exe` - Compiled AutoHotkey trigger
+- `dist/` - Final Electron application (NSIS installer + portable)
 
 ### Project Structure
 
 ```
 src/
   main/
-    index.js          — App lifecycle, single-instance lock, startup sequence
-    windowManager.js  — BrowserWindow creation, popup screen-clamping logic
-    ipcHandlers.js    — All IPC channel handlers (search, config I/O, icon read)
-    triggerServer.js  — Internal HTTP server on 127.0.0.1:49152 (AHK → Electron bridge)
-    ahkManager.js     — AHK trigger process spawn/kill lifecycle
-    trayManager.js    — System tray icon and context menu
-    logger.js         — electron-log configuration (5MB rotation)
+    index.js          - App lifecycle, single-instance lock, startup sequence
+    windowManager.js  - BrowserWindow creation, popup screen-clamping logic
+    ipcHandlers.js    - All IPC channel handlers (search, config I/O, icon read)
+    triggerServer.js  - Internal HTTP server on 127.0.0.1:49152 (AHK → Electron bridge)
+    ahkManager.js     - AHK trigger process spawn/kill lifecycle
+    trayManager.js    - System tray icon and context menu
+    logger.js         - electron-log configuration (5MB rotation)
   renderer/
-    popup/            — Popup UI (Vanilla JS + CSS)
-    settings/         — Settings UI (store, bridge, ui, main)
+    popup/            - Popup UI (Vanilla JS + CSS)
+    settings/         - Settings UI (store, bridge, ui, main)
   preload/
-    index.js          — contextBridge API surface (electronAPI)
+    index.js          - contextBridge API surface (electronAPI)
   shared/
-    constants.js      — IPC channel names, default providers, default appearance
+    constants.js      - IPC channel names, default providers, default appearance
 .ahk/
-  pop_search_trigger.ahk — Global hotkey trigger (CapsLock+S, RButton hold)
+  nexus_trigger.ahk - Global hotkey trigger (CapsLock+S, RButton hold)
 ```
 
 ### Architecture Notes
 
-The AHK trigger communicates with Electron via an internal HTTP server (`triggerServer.js`) on `127.0.0.1:49152`. If the server is not responding (app not yet started), the AHK script falls back to launching `PopSearch.exe --search="<query>"` directly. The main process applies a single-instance lock; a second invocation passes its arguments to the already-running instance.
+The AHK trigger communicates with Electron via an internal HTTP server (`triggerServer.js`) on `127.0.0.1:49152`. If the server is not responding (app not yet started), the AHK script falls back to launching `Nexus Launcher.exe --search="<query>"` directly. The main process applies a single-instance lock; a second invocation passes its arguments to the already-running instance.
 
 Hardware acceleration is disabled at startup (`app.disableHardwareAcceleration()`) and the V8 heap is capped at 512MB to keep idle RAM usage minimal.
 
@@ -302,7 +302,7 @@ Hardware acceleration is disabled at startup (`app.disableHardwareAcceleration()
 
 - **Hotkey Conflict**: If `CapsLock + S` conflicts with another app, use Right-Click Hold instead.
 - **AHK Compilation**: Ensure AutoHotkey v2 is installed before running `npm run build:ahk`.
-- **Icons Not Loading**: Remote favicons require an internet connection. For offline use, paste a local file path (`.ico`, `.png`, etc.) — it will be auto-converted to Base64.
+- **Icons Not Loading**: Remote favicons require an internet connection. For offline use, paste a local file path (`.ico`, `.png`, etc.) - it will be auto-converted to Base64.
 - **Popup Positioning**: The popup automatically clamps to the nearest display's work area. If it appears off-screen, check multi-monitor DPI scaling.
 - **Log File**: Open the log directly from Settings → Help & Support → Open Log File.
 
@@ -311,7 +311,7 @@ Hardware acceleration is disabled at startup (`app.disableHardwareAcceleration()
 ## Privacy
 
 - **No telemetry, analytics, or network requests** except Google favicon fetching (`s2/favicons`)
-- All settings stored locally in `%APPDATA%/PopSearch/` (or portable directory)
+- All settings stored locally in `%APPDATA%/Nexus Launcher/` (or portable directory)
 - **No data leaves your machine**
 
 ---
@@ -324,7 +324,7 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ## Changelog
 
-### v1.3.1-beta — 2026-02-20
+### v1.3.1-beta - 2026-02-20
 
 #### Bug Fixes
 
@@ -348,7 +348,7 @@ MIT License. See [LICENSE](LICENSE) for details.
 | 4 | **Scroll Wheel Category Switching** | Scrolling the mouse wheel over the popup cycles categories with a 40ms debounce. Supports both vertical and horizontal wheel axes. |
 | 5 | **Provider Search & Group Filter** | Live search bar in Settings → Providers. Group dropdown for category isolation. `#CategoryName` tag syntax in the search bar. |
 | 6 | **Show/Hide Unsorted Toggle** | Toggle in Help & Support controls whether Unsorted providers appear in the popup tab bar. |
-| 7 | **Help & Support Panel** | Quick Start & Pro Tips, full keyboard reference table, Show Unsorted toggle, and one-click Open Log File — all in Settings → Help & Support. |
+| 7 | **Help & Support Panel** | Quick Start & Pro Tips, full keyboard reference table, Show Unsorted toggle, and one-click Open Log File - all in Settings → Help & Support. |
 | 8 | **Inline Icon Label System** | Replaced floating tooltips with a static label row below the search bar. Updates on both hover and keyboard focus. |
 | 9 | **Dynamic URL Field Label** | The "Target URL" field label updates to reflect Web URL / Local File / Command based on the type dropdown selection. |
 | 10 | **Category Drag-to-Reorder** | Settings → Categories rows are draggable. Order is saved immediately and reflected in the popup tab bar and provider dropdowns. |
@@ -356,7 +356,7 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
-### v1.2.0-beta — Previous Release
+### v1.2.0-beta - Previous Release
 
 - Initial Settings UI (Providers, Categories, Bulk Import, Appearance, Help)
 - Drag-to-reorder for providers

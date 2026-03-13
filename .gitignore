@@ -1,21 +1,37 @@
-node_modules
+# --- Dependencies ---
+node_modules/
+
+# --- Build outputs ---
 out/
 dist/
-docs/
-screenshot/
-MASTER_OVERVIEW.md
+
+# --- Compiled binaries ---
+*.exe
+*.blockmap
+
+# --- Media / large assets ---
+*.mp4
+
+# --- Electron logs ---
 *.log
 debug_log.txt
-.idea
-.vscode
-.DS_Store
-assets/pop_search_trigger.exe
-*.exe
-*.mp4
-READMEv2.md
 
+# --- Dev tools ---
+.idea/
+.vscode/
+.DS_Store
+
+# --- Git sync tooling ---
 gitsync.bat
 deploy-log.txt
 .gitsync.lock
 
+# --- Internal / non-public docs ---
+docs/
+screenshot/
+MASTER_OVERVIEW.md
+debug_history.md
 popup_search_project_claude_analysis/
+
+# --- Deprecated files ---
+READMEv2.md

@@ -30,7 +30,7 @@ logToFile(`Resources Path: ${process.resourcesPath}`);
 
 // Performance: Disable GPU to save RAM
 app.disableHardwareAcceleration();
-app.setAppUserModelId('com.popsearch.beta');
+app.setAppUserModelId('com.nexuslauncher.app');
 nativeTheme.themeSource = 'dark';
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=512');
 

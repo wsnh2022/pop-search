@@ -1,20 +1,20 @@
 {
-  "name": "popsearch",
+  "name": "nexus-launcher",
   "version": "1.3.1-beta",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "start": "electron-vite dev",
-    "build:ahk": "chcp 65001 > nul && \"C:\\Program Files\\AutoHotkey\\Compiler\\Ahk2Exe.exe\" /in .ahk/pop_search_trigger.ahk /out pop_search_trigger.exe && move /y .ahk\\pop_search_trigger.exe assets\\pop_search_trigger.exe",
+    "build:ahk": "chcp 65001 > nul && \"C:\\Program Files\\AutoHotkey\\Compiler\\Ahk2Exe.exe\" /in .ahk/nexus_trigger.ahk /out nexus_trigger.exe && move /y .ahk\\nexus_trigger.exe assets\\nexus_trigger.exe",
     "clean": "rimraf dist out",
     "build": "npm run clean && npm run build:ahk && electron-vite build",
     "preview": "electron-vite preview",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder"
   },
-  "description": "A lightweight frameless search popup triggered by a global shortcut.",
-  "author": "PopSearch",
-  "homepage": "https://github.com/the-thinker/popsearch-v1",
+  "description": "Context-triggered action launcher for Windows. Dispatch selected text to any URL, file, script, or command via an unlimited provider library.",
+  "author": "Nexus Launcher",
+  "homepage": "https://github.com/wsnh2022/nexus-launcher",
   "devDependencies": {
     "electron": "^40.2.1",
     "electron-builder": "^26.7.0",
@@ -23,8 +23,8 @@
     "vite": "^7.3.1"
   },
   "build": {
-    "appId": "com.popsearch.beta",
-    "productName": "PopSearch Beta",
+    "appId": "com.nexuslauncher.app",
+    "productName": "Nexus Launcher",
     "asar": true,
     "directories": {
       "output": "dist",
@@ -55,7 +55,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "PopSearch Beta"
+      "shortcutName": "Nexus Launcher"
     },
     "portable": {
       "artifactName": "${productName}-${version}-portable.${ext}"

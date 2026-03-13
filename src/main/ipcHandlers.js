@@ -106,7 +106,7 @@ export function registerIpcHandlers() {
         const window = BrowserWindow.fromWebContents(event.sender);
         const { filePath } = await dialog.showSaveDialog(window, {
             title: 'Export Configuration',
-            defaultPath: 'pop_search_config.json',
+            defaultPath: 'nexus_launcher_config.json',
             filters: [{ name: 'JSON', extensions: ['json'] }]
         });
 

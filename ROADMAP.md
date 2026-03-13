@@ -1,6 +1,6 @@
-# 🔮 Roadmap
+# Roadmap
 
-Future plans and feature roadmap for PopSearch.
+Future plans and feature roadmap for Nexus Launcher.
 
 ## 🚀 Planned Features
 
