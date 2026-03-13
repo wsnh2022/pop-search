@@ -292,7 +292,7 @@ function renderPopup() {
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.id = 'search-input';
-    searchInput.placeholder = 'Pop Search...';
+    searchInput.placeholder = 'Nexus Search...';
     searchInput.value = currentQuery;
 
     searchInput.oninput = (e) => {
