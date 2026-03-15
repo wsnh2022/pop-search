@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "electron-vite dev",
     "start": "electron-vite dev",
-    "build:ahk": "chcp 65001 > nul && \"C:\\Program Files\\AutoHotkey\\Compiler\\Ahk2Exe.exe\" /in .ahk/nexus_trigger.ahk /out nexus_trigger.exe && move /y .ahk\\nexus_trigger.exe assets\\nexus_trigger.exe",
+    "build:ahk": "chcp 65001 > nul && \"C:\\Program Files\\AutoHotkey\\Compiler\\Ahk2Exe.exe\" /in .ahk/nexus_trigger.ahk /out assets\\nexus_trigger.exe",
     "clean": "rimraf dist out",
     "build": "npm run clean && npm run build:ahk && electron-vite build",
     "preview": "electron-vite preview",
