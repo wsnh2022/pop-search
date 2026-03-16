@@ -1,4 +1,4 @@
-// Shared Constants for Nexus Launcher v1.3.1-beta
+// Shared Constants for Nexus Launcher v1.3.2-beta
 
 export const IPC_CHANNELS = {
     SHOW_POPUP: 'show-popup',
