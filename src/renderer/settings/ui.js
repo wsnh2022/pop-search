@@ -52,7 +52,7 @@ export function initUI() {
             log('Appearance settings mapped to DOM.');
         } catch (e) { log(`Error mapping appearance: ${e.message}`); }
 
-        // 3. Color previews removed — native color input renders its own swatch
+        // 3. Color previews removed - native color input renders its own swatch
 
         // 4. Setup Listeners (The "Broken Input" Suspect)
         const saveSilently = () => saveAppearance(true);
@@ -96,7 +96,7 @@ export function initUI() {
 
             setupToggle('toggleUnsortedBtn', settings.showUnsorted !== false, null);
 
-            // Launch at startup toggle — reads current state from OS (startup folder)
+            // Launch at startup toggle - reads current state from OS (startup folder)
             if (window.electronAPI && window.electronAPI.getLaunchAtStartup) {
                 window.electronAPI.getLaunchAtStartup().then(isEnabled => {
                     const el = document.getElementById('launchAtStartupBtn');
@@ -444,7 +444,7 @@ export function renderProviders() {
         div.draggable = !searchQuery; // Disable drag during search to prevent confusion
         div.dataset.index = originalIndex;
 
-        // Extract first entry only for favicon resolution — multi-URL providers use ;; separator
+        // Extract first entry only for favicon resolution - multi-URL providers use ;; separator
         const primaryUrl = provider.url.split(';;')[0].trim();
         const favicon = provider.icon ? toImageSrc(provider.icon) : getFaviconUrl(primaryUrl);
         const catName = provider.category || 'Unsorted';
@@ -1049,18 +1049,18 @@ export async function executeBulkImport() {
     if (!confirmed) return;
 
 
-    // 1. Resolve categories — map 'General' (parseBulkImport default) to '' (Unsorted)
+    // 1. Resolve categories - map 'General' (parseBulkImport default) to '' (Unsorted)
     //    Only create a new category key for explicitly named categories, never for the
     //    implicit fallback, to avoid injecting a junk 'Unsorted' key into the category store.
     const existingCats = Store.getCategories();
     newItems.forEach(item => {
         const rawCat = item.category;
         if (!rawCat || rawCat === 'General') {
-            item.category = ''; // Treat as unsorted — no explicit category key created
+            item.category = ''; // Treat as unsorted - no explicit category key created
             return;
         }
         if (!existingCats[rawCat]) {
-            existingCats[rawCat] = '📁'; // New named category — add with default icon
+            existingCats[rawCat] = '📁'; // New named category - add with default icon
         }
     });
     Store.saveCategories(existingCats);
@@ -1085,7 +1085,7 @@ export async function executeBulkImport() {
     const skippedCount = processedItems.length - dedupedItems.length;
 
     if (dedupedItems.length === 0) {
-        showToast(`All ${processedItems.length} provider(s) already exist — nothing imported.`, 'info');
+        showToast(`All ${processedItems.length} provider(s) already exist - nothing imported.`, 'info');
         return;
     }
 
@@ -1158,7 +1158,7 @@ export function renderPresetDropdown() {
     if (!select) return;
     const presets = Store.getThemePresets();
     const current = select.value; // preserve selection if it still exists
-    select.innerHTML = '<option value="">— Select a preset —</option>';
+    select.innerHTML = '<option value="">- Select a preset -</option>';
     presets.forEach((p, i) => {
         const opt = document.createElement('option');
         opt.value = i;

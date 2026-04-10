@@ -27,7 +27,7 @@ export const Bridge = {
                     showToast('Appearance settings imported!', 'info');
                 }
 
-                // Handle theme presets if present — merge by name, don't wipe existing
+                // Handle theme presets if present - merge by name, don't wipe existing
                 if (Array.isArray(imported.themePresets) && imported.themePresets.length > 0) {
                     const existing = Store.getThemePresets();
                     const merged = [...existing];

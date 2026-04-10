@@ -10,7 +10,7 @@
 ![Electron](https://img.shields.io/badge/Electron-4B32C3?logo=electron&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 
-Nexus Launcher is a context-triggered action launcher for Windows. Select text in any application, trigger with CapsLock + S, Right-Click Hold (300ms), or scroll the mouse wheel over the popup — and instantly dispatch to any URL-based search engine, AI tool, internal system, local file, or script. Navigate entirely by keyboard or mouse. Providers and categories are both unlimited, with no caps. Runs in the system tray, restores your original clipboard after each search, and ships as a single portable exe with zero telemetry.
+Nexus Launcher is a context-triggered action launcher for Windows. Select text in any application, trigger with CapsLock + S, Right-Click Hold (300ms), or scroll the mouse wheel over the popup - and instantly dispatch to any URL-based search engine, AI tool, internal system, local file, or script. Navigate entirely by keyboard or mouse. Providers and categories are both unlimited, with no caps. Runs in the system tray, restores your original clipboard after each search, and ships as a single portable exe with zero telemetry.
 
 > **Windows 10+ only.** macOS/Linux not supported.
 

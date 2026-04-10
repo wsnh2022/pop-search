@@ -9,7 +9,7 @@
     global _capsUsedAsModifier := false  ; Reset modifier flag on every CapsLock press
 }
 
-; CapsLock released alone (no S pressed) — restore native toggle behavior
+; CapsLock released alone (no S pressed) - restore native toggle behavior
 ~*CapsLock Up:: {
     if !_capsUsedAsModifier {
         ; Manually toggle CapsLock state since AHK suppressed the native toggle
@@ -22,13 +22,13 @@ CapsLock & s:: {
     TriggerPopup()
 }
 
-; RButton — capture text at button-DOWN (selection still intact), decide on UP
+; RButton - capture text at button-DOWN (selection still intact), decide on UP
 ; Short press  → replay native right-click (context menu as normal)
 ; Long press ≥300ms → open Nexus popup with the captured text
 RButton:: {
     ; ── STEP 1: grab selected text RIGHT NOW at button-down ─────────────────
     ; Most apps clear text selection on RButton-down, so Ctrl+C must happen
-    ; HERE — before KeyWait — while the selection is still alive.
+    ; HERE - before KeyWait - while the selection is still alive.
     savedClip := ClipboardAll()
     A_Clipboard := ""
     Send("^c")
@@ -66,7 +66,7 @@ FirePopup(selectedText) {
     }
 }
 
-; Called by CapsLock+S — keyboard shortcut so selection survives, Ctrl+C is safe here
+; Called by CapsLock+S - keyboard shortcut so selection survives, Ctrl+C is safe here
 TriggerPopup() {
     savedClipboard := ClipboardAll()
     A_Clipboard := ""
@@ -86,7 +86,7 @@ COMPILATION TIPS:
    to create a standalone "nexus_trigger.exe".
 */
 
-; Pure AHK v2 URL encoder — no IE/HTMLFile COM dependency (removed: broke on Win11)
+; Pure AHK v2 URL encoder - no IE/HTMLFile COM dependency (removed: broke on Win11)
 UriEncode(str) {
     encoded := ""
     Loop Parse, str {

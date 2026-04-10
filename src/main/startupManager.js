@@ -14,7 +14,7 @@ function getStartupShortcutPath() {
 
 /**
  * Returns true if the startup shortcut currently exists in the Windows Startup folder.
- * Reads from the OS directly — never from a cache or store.
+ * Reads from the OS directly - never from a cache or store.
  */
 export function getLaunchAtStartup() {
     return fs.existsSync(getStartupShortcutPath());
@@ -31,11 +31,11 @@ export function setLaunchAtStartup(enabled) {
         if (enabled) {
             // PORTABLE_EXECUTABLE_FILE is set by electron-builder portable builds.
             // process.execPath on a portable points to a temp extraction folder
-            // that disappears on exit — never use it as the shortcut target.
+            // that disappears on exit - never use it as the shortcut target.
             const exePath = process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
 
             // Use -EncodedCommand (base64) to avoid all backslash/quote escaping issues.
-            // PowerShell single-quoted strings are literal — no escape sequences exist.
+            // PowerShell single-quoted strings are literal - no escape sequences exist.
             // Doubling backslashes via .replace() makes paths invalid. Base64 is the fix.
             const ps = [
                 `$ws = New-Object -ComObject WScript.Shell`,

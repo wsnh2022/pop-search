@@ -171,7 +171,7 @@ function updateIconGrid() {
             iconContainer.setAttribute('data-tooltip', provider.name);
 
             const img = document.createElement('img');
-            // Extract first entry only for favicon resolution — multi-URL providers use ;; separator
+            // Extract first entry only for favicon resolution - multi-URL providers use ;; separator
             const primaryUrl = provider.url.split(';;')[0].trim();
             img.src = provider.icon ? toImageSrc(provider.icon) : getFaviconUrl(primaryUrl);
             img.className = 'provider-icon';
@@ -244,7 +244,7 @@ function updateCategoryLabel(iconName = null) {
     const label = document.getElementById('category-name-label');
     if (!label) return;
 
-    // Clear and rebuild with spans — use textContent to avoid XSS on user-defined names
+    // Clear and rebuild with spans - use textContent to avoid XSS on user-defined names
     label.innerHTML = '';
 
     const catSpan = document.createElement('span');
@@ -296,7 +296,7 @@ function renderPopup() {
     searchInput.value = currentQuery;
 
     searchInput.oninput = (e) => {
-        currentQuery = e.target.value;  // Track query only — grid rebuild not needed, icons don't change while typing
+        currentQuery = e.target.value;  // Track query only - grid rebuild not needed, icons don't change while typing
         selectedIndex = 0;
     };
 

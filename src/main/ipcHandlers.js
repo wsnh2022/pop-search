@@ -219,7 +219,7 @@ function handleAction(target, query, type, shouldCopy) {
     }
 
     if (type === 'url') {
-        // Split on ;; to support multi-URL launch — single URLs pass through as array of one
+        // Split on ;; to support multi-URL launch - single URLs pass through as array of one
         target.split(';;')
             .map(u => u.trim())
             .filter(Boolean)
@@ -228,7 +228,7 @@ function handleAction(target, query, type, shouldCopy) {
                 openInBrowser(searchUrl);
             });
     } else if (type === 'file') {
-        // Split on ;; to support multi-path launch — single paths pass through as array of one
+        // Split on ;; to support multi-path launch - single paths pass through as array of one
         target.split(';;')
             .map(p => p.trim())
             .filter(Boolean)
